@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    background-color: #D6D6D6;
+    background: linear-gradient(to bottom, black 0%, #D6D6D6 50%);
+    background-size: 100% 300%;
+    transition: background-position 0.5s;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-family: Arial, sans-serif;
+    color: white;
+  }
+
+  .logo {
+    margin-top: 50px;
+    width: 300px;
+  }
+
+  .content {
+    margin-top: 125px;
+    padding: 10px;
+    border-radius: 10px;
+    background-color: rgba(0, 0, 0, 0.5);
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+    text-align: center;
+  }
+
+  .input-field {
+    width: calc(100% - 20px); /* Shaves off right of input field */
+    padding: 10px;
+    margin: 5px 0; 
+    border: none;
+    border-radius: 5px;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+    outline: none;
+  }
+
+  .input-field::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+  }
+
+  /* Color for hyperlink */
+  .content a {
+    color: lightblue; /* Set the color to light blue */
+  }
+  /* Spacing adjustment */
+  .content p {
+    margin-top: 10px;
+  }
+</style>
+<title>Purdue Capstone Logon</title>
+</head>
+<body>
+  <img class="logo" src="Purdue_Boilermakers_logo.svg" alt="Purdue University Logo">
+  <div class="content">
+    <h1>Capstone Logon</h1>
+    <form>
+      <input class="input-field" type="text" placeholder="Username">
+      <input class="input-field" type="password" placeholder="Password">
+      <button class="input-field" type="submit">Login</button>
+    </form>
+  </div>
+  <p class="content"><a href="https://purdue.edu/">Forgot Password?</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Don't have an account? <a href="https://purdue.edu/">Sign up</a></p>
+     
+<script>
+  // Adjust gradient height dynamically
+  const gradient = document.querySelector('body');
+  
+  function updateGradientHeight() {
+    const windowHeight = window.innerHeight;
+    gradient.style.backgroundSize = `100% ${windowHeight * 2}px`;
+  }
+
+  window.addEventListener('load', updateGradientHeight);
+  window.addEventListener('resize', updateGradientHeight);
+</script>
+</body>
+</html>
