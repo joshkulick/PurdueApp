@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    background-color: #D6D6D6;
+    background: linear-gradient(to bottom, black 0%, #D6D6D6 50%);
+    background-size: 100% 300%;
+    transition: background-position 0.5s;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: Arial, sans-serif;
+    color: white;
+  }
+
+  .logo {
+    margin-top: -400px; /* Adjust the margin as needed */
+    width: 300px; /* Adjust size as needed */
+  }
+</style>
+<title>Purdue Capstone Logon</title>
+</head>
+<body>
+<img class="logo" src="Purdue_Boilermakers_logo.svg" alt=""Purude University Logo">
+<script>
+  // Adjust gradient height dynamically
+  const gradient = document.querySelector('body');
+  
+  function updateGradientHeight() {
+    const windowHeight = window.innerHeight;
+    gradient.style.backgroundSize = `100% ${windowHeight * 2}px`;
+  }
+
+  window.addEventListener('load', updateGradientHeight);
+  window.addEventListener('resize', updateGradientHeight);
+</script>
+</body>
+</html>
