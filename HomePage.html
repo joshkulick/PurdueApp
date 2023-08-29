@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    background-color: #D6D6D6;
+    background: linear-gradient(to bottom, black 0%, #D6D6D6 50%);
+    background-size: 100% 300%;
+    transition: background-position 0.5s;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: Arial, sans-serif;
+    color: white;
+  }
+
+  .logo {
+    margin-top: -700px; /* Adjust the margin as needed */
+    width: 300px; /* Adjust size as needed */
+  }
+
+  .navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background-color: #333; /* Adjust to match your color scheme */
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 0 20px;
+  }
+
+  .menu-icon {
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 30px;
+    height: 20px;
+  }
+
+  .bar {
+    width: 30px;
+    height: 3px;
+    background-color: white; /* Adjust to match your color scheme */
+    transition: background-color 0.3s;
+  }
+
+  .dropdown-menu {
+    position: absolute;
+    top: 50px;
+    right: 20px;
+    background-color: white;
+    border: 1px solid #ccc;
+    padding: 10px;
+    display: none;
+  }
+
+  .dropdown-menu ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .dropdown-menu li {
+    margin: 5px 0;
+  }
+
+  .dropdown-menu a {
+    text-decoration: none;
+    color: #333;
+    transition: color 0.3s;
+  }
+
+  .dropdown-menu a:hover {
+    color: #007bff;
+  }
+
+  .dropdown-menu.active {
+    display: block;
+  }
+</style>
+<title>Purdue Capstone Logon</title>
+</head>
+<body>
+<div class="navbar">
+  <div class="menu-icon" id="menuIcon">
+    <div class="bar"></div>
+    <div class="bar"></div>
+    <div class="bar"></div>
+  </div>
+</div>
+
+<img class="logo" src="Purdue_Boilermakers_logo.svg" alt="Purdue University Logo">
+
+<div class="dropdown-menu" id="dropdownMenu">
+    <!-- Add your dropdown menu content here -->
+    <ul>
+      <li><a href="#">Profile</a></li>
+      <li><a href="#">Settings</a></li>
+      <li><a href="#">Logout</a></li>
+    </ul>
+  </div>
+<script>
+  // Adjust gradient height dynamically
+  const gradient = document.querySelector('body');
+  
+  function updateGradientHeight() {
+    const windowHeight = window.innerHeight;
+    gradient.style.backgroundSize = `100% ${windowHeight * 2}px`;
+  }
+  
+  window.addEventListener('load', updateGradientHeight);
+  window.addEventListener('resize', updateGradientHeight);
+
+  const menuIcon = document.getElementById('menuIcon');
+  const dropdownMenu = document.getElementById('dropdownMenu');
+
+  menuIcon.addEventListener('click', () => {
+    dropdownMenu.classList.toggle('active');
+  });
+</script>
+</body>
+</html>
