@@ -3,6 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- API Refernce Links -->
+<link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;700&display=swap" rel="stylesheet">
+
 <style>
   body {
     margin: 0;
@@ -17,11 +21,29 @@
     justify-content: center;
     font-family: Arial, sans-serif;
     color: white;
+    flex-direction: column; /* This ensures the content stacks vertically */
+  }
+
+  .content-container {
+    width: 100%;
+    padding-top: 10vh; /* This sets the distance from the top based on the height of the viewport */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
   }
 
   .logo {
-    margin-top: -700px; /* Adjust the margin as needed */
-    width: 300px; /* Adjust size as needed */
+    width: 25vw; /* Adjust the width based on the width of the viewport */
+    max-width: 300px; /* Limits the logo size for larger screens */
+  }
+
+  #welcomeBanner {
+    font-size: 3vw; /* Adjust font size based on the width of the viewport */
+    text-align: center;
+    font-weight: bold;
+    color: black;
+    font-family: 'Nunito Sans', sans-serif;
   }
 
   .navbar {
@@ -86,6 +108,38 @@
   .dropdown-menu.active {
     display: block;
   }
+
+  .content-center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5vh; /* Adjust the gap between the logo, welcome banner, and buttons */
+  }
+
+  .button-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px; /* Adjust gap between logo, welcome banner, and buttons */
+  }
+
+  .button {
+    background-color: #CEB888; /* Purdue Gold color */
+    color: white;
+    padding: 15px 20px;
+    border: none;
+    cursor: pointer;
+    font-family: 'Nunito Sans', sans-serif;
+    border-radius: 5px;
+    transition: background-color 0.2s;
+    font-size: 1.5vw; /* Adjust font size based on the width of the viewport */
+    padding: 1vh 2vw; /* Adjust padding using viewport units for height and width */
+  }
+
+  .button:hover {
+    background-color: #A0760C; /* Darkened Purdue Gold for hover effect */
+  }
+
 </style>
 <title>Purdue Capstone Logon</title>
 </head>
@@ -97,17 +151,30 @@
     <div class="bar"></div>
   </div>
 </div>
+<div class="content-container">
+  <div class="content-center">
+    <img class="logo" src="Purdue_Boilermakers_logo.svg" alt="Purdue University Logo">
+    <div id="welcomeBanner">Welcome Team <span id="teamName">{VariableName}</span></div>
+    
+    <!-- Add buttons here -->
+    <div class="button-container">
+      <button class="button">Resource Check In/Check Out</button>
+      <button class="button">PRF Submission</button>
+      <button class="button">PRF Status</button>
+      <button class="button">BOM</button>
+    </div>
+  </div>
+</div>
 
-<img class="logo" src="Purdue_Boilermakers_logo.svg" alt="Purdue University Logo">
 
 <div class="dropdown-menu" id="dropdownMenu">
-    <!-- Add your dropdown menu content here -->
     <ul>
       <li><a href="#">Profile</a></li>
       <li><a href="#">Settings</a></li>
       <li><a href="#">Logout</a></li>
     </ul>
-  </div>
+</div>
+
 <script>
   // Adjust gradient height dynamically
   const gradient = document.querySelector('body');
@@ -126,6 +193,9 @@
   menuIcon.addEventListener('click', () => {
     dropdownMenu.classList.toggle('active');
   });
+
+  const teamNameElement = document.getElementById('teamName');
+  teamNameElement.textContent = 'Purdue Pete';  // This sets the hardcoded value.
 </script>
 </body>
 </html>
