@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- API Refernce Links -->
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #D6D6D6;
+            background: linear-gradient(to bottom, black 0%, #D6D6D6 50%);
+            background-size: 100% 300%;
+            transition: background-position 0.5s;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;  /* This makes sure items stack vertically */
+            font-family: 'Nunito Sans', sans-serif;
+            color: white;
+        }
+
+        .logo {
+            width: 300px; /* Adjust size as needed */
+            display: block; /* Ensures the image is treated as block level for centering */
+            margin: 0 auto; /* Centers the image horizontally */
+        }
+
+        .welcome-banner {
+            margin-top: 20px; /* Adjust the margin as needed */
+            font-size: 20px; /* Adjust font size as desired */
+            text-align: center;
+            color: #CEB888; /* Adjust color as desired, I chose Purdue Gold for consistency */
+            font-weight: bold;
+        }
+
+    </style>
+    <title>Purdue Capstone Logon</title>
+</head>
+
+<body>
+    <img class="logo" src="Purdue_Boilermakers_logo.svg" alt="Purude University Logo">
+    <div class="welcome-banner">You have successfully logged out! Goodbye.</div>
+    <script>
+        // Adjust gradient height dynamically
+        const gradient = document.querySelector('body');
+
+        function updateGradientHeight() {
+            const windowHeight = window.innerHeight;
+            gradient.style.backgroundSize = `100% ${windowHeight * 2}px`;
+        }
+
+        window.addEventListener('load', updateGradientHeight);
+        window.addEventListener('resize', updateGradientHeight);
+    </script>
+</body>
+
+</html>
