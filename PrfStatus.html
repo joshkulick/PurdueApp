@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    background-color: #D6D6D6;
+    background: linear-gradient(to bottom, black 0%, #D6D6D6 50%);
+    background-size: 100% 300%;
+    transition: background-position 0.5s;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: Arial, sans-serif;
+    color: black;
+  }
+
+  h1 {
+    color: rgb(230, 184, 100);
+    text-align: center;
+    margin-top: 30px; /* Increased top margin */
+  }
+
+  .logo {
+    width: 300px;
+    margin-top: 20px;
+  }
+
+  .button-container {
+    margin-top: 20px;
+    text-align: center;
+  }
+
+  .register {
+    display: inline-block;
+    padding: 15px 30px;
+    font-size: 18px;
+    background-color: rgb(191, 150, 74);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  .register:hover {
+    background-color: rgb(230, 184, 100);
+  }
+
+  .button {
+    font-size: 24px;
+    color: #ff9900;
+  }
+
+  form {
+    margin-top: 20px;
+    padding: 20px;
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 10px;
+    width: 300px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+
+  th, td {
+    padding: 10px;
+    text-align: left;
+  }
+
+  th {
+    background-color: #333;
+    color: white;
+  }
+
+  tr:nth-child(even) {
+    background-color: #f2f2f2;
+  }
+
+  input[type="email"],
+  input[type="password"],
+  input[type="text"] {
+    width: 100%;
+    padding: 5px;
+    border: 1px solid white;
+    border-radius: 5px;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+  }
+
+  input[type="email"]:focus,
+  input[type="password"]:focus,
+  input[type="text"]:focus {
+    outline: none;
+    background-color: rgba(255, 255, 255, 0.3);
+  }
+
+  .see-more-button {
+    margin-top: 20px;
+  }
+</style>
+<title>PRF Status</title>
+</head>
+<body>
+<img class="logo" src="Purdue_Boilermakers_logo.svg" alt="Purdue University Logo">
+
+<table>
+  <thead>
+    <tr>
+      <th>Date</th>
+      <th>Document Name</th>
+      <th>Status</th>
+      <th>Comments</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>currentDate</td>
+      <td>Document 1</td>
+      <td>Approved</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <td>currentDate</td>
+      <td>Document 2</td>
+      <td>Pending</td>
+      <td>Needs review</td>
+    </tr>
+    <!-- Add more rows as needed -->
+  </tbody>
+</table>
+
+<div class="button-container">
+  <button class="see-more-button">See More</button>
+</div>
+
+<script>
+  // Adjust gradient height dynamically
+  const gradient = document.querySelector('body');
+  
+  function updateGradientHeight() {
+    const windowHeight = window.innerHeight;
+    gradient.style.backgroundSize = `100% ${windowHeight * 2}px`;
+  }
+  function addRowToTable(date, documentName, status, comments) {
+    const tableBody = document.getElementById('statusTable').getElementsByTagName('tbody')[0];
+    const newRow = tableBody.insertRow(tableBody.rows.length);
+    const dateCell = newRow.insertCell(0);
+    const documentNameCell = newRow.insertCell(1);
+    const statusCell = newRow.insertCell(2);
+    const commentsCell = newRow.insertCell(3);
+
+    dateCell.innerHTML = date;
+    documentNameCell.innerHTML = documentName;
+    statusCell.innerHTML = status;
+    commentsCell.innerHTML = comments;
+  }
+
+  window.addEventListener('load', updateGradientHeight);
+  window.addEventListener('resize', updateGradientHeight);
+ 
+  const currentDate = new Date().toISOString().slice(0, 10); // Get the current date in YYYY-MM-DD format
+  addRowToTable(currentDate, 'New Document', 'Pending', 'Waiting for approval');
+
+</script>
+</body>
+</html>
