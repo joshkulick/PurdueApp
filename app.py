@@ -46,6 +46,12 @@ def registration():
             # The passwords do not match, return an error message
             return "Passwords do not match", 400
 
+        # Check if a user with the given email address already exists
+        existing_user = User.query.filter_by(email=email).first()
+        if existing_user:
+            # A user with the given email address already exists, return an error message
+            return "A user with this email address already exists", 400
+        
         new_user = User(email=email, password=password, team_number=team_number)
         
         db.session.add(new_user)
@@ -54,9 +60,16 @@ def registration():
         return redirect(url_for('login'))  # Redirect to the login page after successful registration
     return render_template('RegistrationPage.html')
 
-@app.route('/start_here')
-def start_here():
-    return render_template('StartHere.html')
+@app.route('/clear_database')
+def clear_database():
+    try:
+        # Delete all rows in the User table
+        num_rows_deleted = db.session.query(User).delete()
+        db.session.commit()
+        return f"Successfully deleted {num_rows_deleted} rows."
+    except Exception as e:
+        db.session.rollback()
+        return f"An error occurred: {str(e)}"
 
 @app.route('/prfsub')
 def prfsub():
