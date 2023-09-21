@@ -1,9 +1,10 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for,flash
 from flask_sqlalchemy import SQLAlchemy
 
 
 app = Flask(__name__)
 
+app.secret_key = 'Secret123'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://capstonepro:blowfish-orange-840@mysql.ecn.purdue.edu/capstonepro'
 
 # Setting it to False disables Flask-SQLAlchemy's modification tracking system
@@ -18,7 +19,7 @@ class User(db.Model):
     team_number = db.Column(db.Integer, nullable=False)
 
 
-@app.route('/')
+@app.route('/home')
 def home():
     return render_template('HomePage.html')
 
@@ -26,8 +27,35 @@ def home():
 def logged_out():
     return render_template('LoggedOutPage.html')
 
-@app.route('/login')
+@app.route('/login', methods=['GET', 'POST'])
 def login():
+    print(request.form)
+    if request.method == 'POST':
+        #Get information from form
+        email = request.form.get('email')
+        password = request.form.get('password')
+        
+        #Checks to make sure that the user actually filled out the form
+        if email and password:
+            email = email.lower()
+            user = User.query.filter_by(email=email).first()
+        else:
+            # Handle the case where email is a Nonetype (nothing populated)
+            flash('Both Email and Password are required.', 'danger')
+            return redirect(url_for('login'))
+        
+        #Validation
+        print(f"Email from form: {email}")
+        print(f"Password from form: {password}")
+
+        if user and user.password == password:  # Note: This is a simple check. Hashed Password future state?
+            # Log the user in (you might want to use Flask-Login for session management)
+            print("Logged in succesfully")
+            return redirect(url_for('home'))  # home route
+        else:
+            flash('Invalid credentials. Please sign up if you do not have an account.', 'danger')
+            return redirect(url_for('login'))
+    
     return render_template('LoginPage.html')
 
 @app.route('/prf_status')
