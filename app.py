@@ -51,6 +51,26 @@ def forgot_password():
     
     return render_template('ForgotPassword.html')
 
+@app.route('/reset-password', methods=['POST'])
+def reset_password():
+    email = request.form.get('email')
+    
+    if not email:
+        flash('Email is required.', 'danger')
+        return redirect(url_for('forgot_password'))
+    
+    # Check if the email exists in the database
+    user = User.query.filter_by(email=email).first()
+    if not user:
+        return redirect(url_for('forgot_password', error='no_account'))
+    
+    # Generate a unique token and send an email
+    # For now, I'm just flashing a message.
+    
+    flash('Please check your email to change your password', 'success')
+    return redirect(url_for('login'))
+
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     print(request.form)
