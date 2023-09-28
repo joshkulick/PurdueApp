@@ -27,6 +27,30 @@ def home():
 def logged_out():
     return render_template('LoggedOutPage.html')
 
+@app.route('/forgot-password', methods=['GET', 'POST'])
+def forgot_password():
+    if request.method == 'POST':
+        # Handle the form submission for resetting the password
+        # For example, you can send an email with a reset link to the user
+        email = request.form.get('email')
+        if not email:
+            flash('Email is required.', 'danger')
+            return redirect(url_for('forgot_password'))
+        
+        # Check if the email exists in the database
+        user = User.query.filter_by(email=email).first()
+        if not user:
+            flash('No account found with that email.', 'danger')
+            return redirect(url_for('forgot_password'))
+        
+        # Here, you can send an email to the user with a password reset link
+        # (You'll need to integrate with an email service for this)
+        
+        flash('Password reset link sent to your email.', 'success')
+        return redirect(url_for('login'))
+    
+    return render_template('ForgotPassword.html')
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     print(request.form)
