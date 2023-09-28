@@ -1,200 +1,226 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<!-- API Refernce Links -->
-<link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;700&display=swap" rel="stylesheet">
+    <!-- API Reference Links -->
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;700&display=swap" rel="stylesheet">
 
-<style>
-  body {
-    margin: 0;
-    padding: 0;
-    background-color: #D6D6D6;
-    background: linear-gradient(to bottom, black 0%, #D6D6D6 50%);
-    background-size: 100% 300%;
-    transition: background-position 0.5s;
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: Arial, sans-serif;
-    color: white;
-    flex-direction: column; /* This ensures the content stacks vertically */
-  }
+    <style>
+        /* Reset and Global Styles */
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #D6D6D6;
+            background: linear-gradient(to bottom, black 0%, #D6D6D6 50%);
+            background-size: 100% 300%;
+            transition: background-position 0.5s;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: Arial, sans-serif;
+            color: white;
+            flex-direction: column;
+        }
 
-  .content-container {
-    width: 100%;
-    padding-top: 10vh; /* This sets the distance from the top based on the height of the viewport */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-  }
+        /* Navbar Styles */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background-color: #333;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding: 0 20px;
+        }
 
-  .logo {
-    width: 25vw; /* Adjust the width based on the width of the viewport */
-    max-width: 300px; /* Limits the logo size for larger screens */
-  }
+        .menu-icon {
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            width: 30px;
+            height: 20px;
+        }
 
-  #welcomeBanner {
-    font-size: 3vw; /* Adjust font size based on the width of the viewport */
-    text-align: center;
-    font-weight: bold;
-    color: black;
-    font-family: 'Nunito Sans', sans-serif;
-  }
+        .bar {
+            width: 30px;
+            height: 3px;
+            background-color: white;
+            transition: background-color 0.3s;
+        }
 
-  .navbar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    background-color: #333; /* Adjust to match your color scheme */
-    height: 50px;
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    padding: 0 20px;
-  }
+        .dropdown-menu {
+            position: absolute;
+            top: 50px;
+            right: 20px;
+            background-color: white;
+            border: 1px solid #ccc;
+            padding: 10px;
+            display: none;
+        }
 
-  .menu-icon {
-    cursor: pointer;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    width: 30px;
-    height: 20px;
-  }
+        .dropdown-menu ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
 
-  .bar {
-    width: 30px;
-    height: 3px;
-    background-color: white; /* Adjust to match your color scheme */
-    transition: background-color 0.3s;
-  }
+        .dropdown-menu li {
+            margin: 5px 0;
+        }
 
-  .dropdown-menu {
-    position: absolute;
-    top: 50px;
-    right: 20px;
-    background-color: white;
-    border: 1px solid #ccc;
-    padding: 10px;
-    display: none;
-  }
+        .dropdown-menu a {
+            text-decoration: none;
+            color: #333;
+            transition: color 0.3s;
+        }
 
-  .dropdown-menu ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
+        .dropdown-menu a:hover {
+            color: #007bff;
+        }
 
-  .dropdown-menu li {
-    margin: 5px 0;
-  }
+        .dropdown-menu.active {
+            display: block;
+        }
 
-  .dropdown-menu a {
-    text-decoration: none;
-    color: #333;
-    transition: color 0.3s;
-  }
+        /* Content Styles */
+        .content-container {
+            width: 100%;
+            padding-top: 10vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
 
-  .dropdown-menu a:hover {
-    color: #007bff;
-  }
+        .content-center {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5vh;
+        }
 
-  .dropdown-menu.active {
-    display: block;
-  }
+        .logo {
+            width: 25vw;
+            max-width: 300px;
+        }
 
-  .content-center {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 5vh; /* Adjust the gap between the logo, welcome banner, and buttons */
-  }
+        #welcomeBanner {
+            font-size: 3vw;
+            text-align: center;
+            font-weight: bold;
+            color: black;
+            font-family: 'Nunito Sans', sans-serif;
+        }
 
-  .button-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 20px; /* Adjust gap between logo, welcome banner, and buttons */
-  }
+        /* Button Styles */
+        .button-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
 
-  .button {
-    background-color: #CEB888; /* Purdue Gold color */
-    color: white;
-    padding: 15px 20px;
-    border: none;
-    cursor: pointer;
-    font-family: 'Nunito Sans', sans-serif;
-    border-radius: 5px;
-    transition: background-color 0.2s;
-    font-size: 1.5vw; /* Adjust font size based on the width of the viewport */
-    padding: 1vh 2vw; /* Adjust padding using viewport units for height and width */
-  }
+        .button {
+            background-color: #CEB888;
+            color: white;
+            padding: 15px 20px;
+            border: none;
+            cursor: pointer;
+            font-family: 'Nunito Sans', sans-serif;
+            border-radius: 5px;
+            transition: background-color 0.2s;
+            font-size: 1.5vw;
+            padding: 1vh 2vw;
+        }
 
-  .button:hover {
-    background-color: #A0760C; /* Darkened Purdue Gold for hover effect */
-  }
+        .button:hover {
+            background-color: #A0760C;
+        }
 
-</style>
-<title>Purdue Capstone Logon</title>
+
+        @media (max-width: 768px) {
+            .content-container {
+                padding-top: 20vh;
+            }
+
+            .logo {
+                width: 50vw;
+            }
+
+            #welcomeBanner {
+                font-size: 5vw;
+            }
+
+            .button {
+                font-size: 4vw;
+                padding: 2vh 4vw;
+            }
+        }
+    </style>
+    <title>Purdue Capstone Logon</title>
 </head>
+
 <body>
-<div class="navbar">
-  <div class="menu-icon" id="menuIcon">
-    <div class="bar"></div>
-    <div class="bar"></div>
-    <div class="bar"></div>
-  </div>
-</div>
-<div class="content-container">
-  <div class="content-center">
-    <img class="logo" src="static/Purdue_Boilermakers_logo.svg" alt="Purdue University Logo">
-    <div id="welcomeBanner">Welcome Team <span id="teamName">{VariableName}</span></div>
-    
-    <!-- Add buttons here -->
-    <div class="button-container">
-      <button class="button">Resource Check In/Check Out</button>
-      <a href="/prfsub" class="button">PRF Submission</a>
-      <button class="button">PRF Status</button>
-      <button class="button">BOM</button>
+    <div class="navbar">
+        <div class="menu-icon" id="menuIcon">
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+        </div>
     </div>
-  </div>
-</div>
+    <div class="content-container">
+        <div class="content-center">
+            <img class="logo" src="static/Purdue_Boilermakers_logo.svg" alt="Purdue University Logo">
+            <div id="welcomeBanner">Welcome Team <span id="teamName">{VariableName}</span></div>
 
-<div class="dropdown-menu" id="dropdownMenu">
-    <ul>
-      <li><a href="#">Settings</a></li>
-      <li><a href="LoggedOutPage.html">Logout</a></li>
-    </ul>
-</div>
+            <!-- Buttons -->
+            <div class="button-container">
+                <button class="button">Resource Check In/Check Out</button>
+                <a href="/prfsub" class="button">PRF Submission</a>
+                <button class="button">PRF Status</button>
+                <button class="button">BOM</button>
+            </div>
+        </div>
+    </div>
 
-<script>
-  // Adjust gradient height dynamically
-  const gradient = document.querySelector('body');
-  
-  function updateGradientHeight() {
-    const windowHeight = window.innerHeight;
-    gradient.style.backgroundSize = `100% ${windowHeight * 2}px`;
-  }
-  
-  window.addEventListener('load', updateGradientHeight);
-  window.addEventListener('resize', updateGradientHeight);
+    <div class="dropdown-menu" id="dropdownMenu">
+        <ul>
+            <li><a href="#">Settings</a></li>
+            <li><a href="LoggedOutPage.html">Logout</a></li>
+        </ul>
+    </div>
 
-  const menuIcon = document.getElementById('menuIcon');
-  const dropdownMenu = document.getElementById('dropdownMenu');
+    <script>
+        // Adjust gradient height dynamically
+        const gradient = document.querySelector('body');
 
-  menuIcon.addEventListener('click', () => {
-    dropdownMenu.classList.toggle('active');
-  });
+        function updateGradientHeight() {
+            const windowHeight = window.innerHeight;
+            gradient.style.backgroundSize = `100% ${windowHeight * 2}px`;
+        }
 
-  const teamNameElement = document.getElementById('teamName');
-  teamNameElement.textContent = 'Purdue Pete';  // This sets the hardcoded value.
+        window.addEventListener('load', updateGradientHeight);
+        window.addEventListener('resize', updateGradientHeight);
 
-</script>
+        const menuIcon = document.getElementById('menuIcon');
+        const dropdownMenu = document.getElementById('dropdownMenu');
+
+        menuIcon.addEventListener('click', () => {
+            dropdownMenu.classList.toggle('active');
+        });
+
+        const teamNameElement = document.getElementById('teamName');
+        teamNameElement.textContent = 'Purdue Pete'; // This sets the hardcoded value.
+
+    </script>
 </body>
+
 </html>
