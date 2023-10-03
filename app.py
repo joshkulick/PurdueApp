@@ -1,10 +1,13 @@
 from flask import Flask, render_template, request, redirect, url_for,flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_mail import Mail, Message
+from itsdangerous import URLSafeTimedSerializer
 
 app = Flask(__name__)
 
 app.secret_key = 'Secret123'
+# Create a serializer
+s = URLSafeTimedSerializer(app.secret_key)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://capstonepro:blowfish-orange-840@mysql.ecn.purdue.edu/capstonepro'
 
 # Automatic Email Config for Reset Password
@@ -12,8 +15,8 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://capstonepro:blowfish-or
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['MAIL_SERVER'] = 'smtp.example.com'
 app.config['MAIL_PORT'] = 587
-app.config['MAIL_USERNAME'] = 'your_email@example.com'
-app.config['MAIL_PASSWORD'] = 'BoilerUp10!'
+app.config['MAIL_USERNAME'] = 'PurdueCapstone@gmail.com'
+app.config['MAIL_PASSWORD'] = 'BoilerUp!'
 app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USE_SSL'] = False
 
@@ -38,45 +41,63 @@ def logged_out():
 @app.route('/forgot-password', methods=['GET', 'POST'])
 def forgot_password():
     if request.method == 'POST':
-        # Handle the form submission for resetting the password
-        # For example, you can send an email with a reset link to the user
         email = request.form.get('email')
         if not email:
             flash('Email is required.', 'danger')
             return redirect(url_for('forgot_password'))
         
-        # Check if the email exists in the database
         user = User.query.filter_by(email=email).first()
         if not user:
             flash('No account found with that email.', 'danger')
             return redirect(url_for('forgot_password'))
         
-        # Here, you can send an email to the user with a password reset link
-        # (You'll need to integrate with an email service for this)
+        # Sending the reset email
+        msg = Message("Password Reset Request", sender="PurdueCapstone@gmail.com", recipients=[email])
         
+        token = s.dumps(user.email, salt='password-reset-salt')
+        reset_url = url_for('reset_password', token=token, _external=True)
+
+        msg.body = f"Click the following link to reset your password: {reset_url}"
+        mail.send(msg)
         flash('Password reset link sent to your email.', 'success')
         return redirect(url_for('login'))
-    
-    return render_template('ForgotPassword.html')
+    else:
+        # This is the part that was missing. Return a template for the GET request.
+        return render_template('ForgotPassword.html')
 
-@app.route('/reset-password', methods=['POST'])
-def reset_password():
-    email = request.form.get('email')
+
+@app.route('/reset-password/<token>', methods=['GET', 'POST'])
+def reset_password(token):
+    try:
+        email = s.loads(token, salt='password-reset-salt', max_age=3600)  # Token is valid for 1 hour
+    except:
+        flash('The password reset link is invalid or has expired.', 'danger')
+        return redirect(url_for('login'))
     
-    if not email:
-        flash('Email is required.', 'danger')
-        return redirect(url_for('forgot_password'))
-    
-    # Check if the email exists in the database
-    user = User.query.filter_by(email=email).first()
-    if not user:
-        return redirect(url_for('forgot_password', error='no_account'))
-    
-    # Generate a unique token and send an email
-    # For now, I'm just flashing a message.
-    
-    flash('Please check your email to change your password', 'success')
-    return redirect(url_for('login'))
+    if request.method == 'POST':
+        password = request.form.get('password')
+        confirm_password = request.form.get('confirm_password')
+
+        if not password or not confirm_password:
+            flash('Both fields are required.', 'danger')
+            return render_template('ResetPassword.html')
+
+        if password != confirm_password:
+            flash('Passwords do not match.', 'danger')
+            return render_template('ResetPassword.html')
+
+        # Assuming you have a method to update the user's password
+        user = User.query.filter_by(email=email).first()
+        if user:
+            user.password = password  # In the future I need to hash the password or safety
+            db.session.commit()
+            flash('Your password has been updated!', 'success')
+            return redirect(url_for('login'))
+        else:
+            flash('An error occurred. Please try again.', 'danger')
+            return render_template('ResetPassword.html')
+
+    return render_template('ResetPassword.html')
 
 
 @app.route('/login', methods=['GET', 'POST'])
