@@ -1,7 +1,8 @@
-from flask import Flask, render_template, request, redirect, url_for,flash
+from flask import Flask, render_template, request, redirect, url_for,flash,session
 from flask_sqlalchemy import SQLAlchemy
 from flask_mail import Mail, Message
 from itsdangerous import URLSafeTimedSerializer
+from functools import wraps
 
 app = Flask(__name__)
 
@@ -29,13 +30,24 @@ class User(db.Model):
     password = db.Column(db.String(150), nullable=False)
     team_number = db.Column(db.Integer, nullable=False)
 
+#Functions
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'user_id' not in session:
+            return redirect(url_for('login'))
+        return f(*args, **kwargs)
+    return decorated_function
 
+#Web Decoration
 @app.route('/home')
+@login_required
 def home():
     return render_template('HomePage.html')
 
 @app.route('/logged_out')
 def logged_out():
+    session.pop('user_id', None)
     return render_template('LoggedOutPage.html')
 
 @app.route('/forgot-password', methods=['GET', 'POST'])
@@ -123,6 +135,7 @@ def login():
 
         if user and user.password == password:  # Note: This is a simple check. Hashed Password future state?
             # Log the user in (you might want to use Flask-Login for session management)
+            session['user_id'] = user.id
             print("Logged in succesfully")
             return redirect(url_for('home'))  # home route
         else:
@@ -132,6 +145,7 @@ def login():
     return render_template('LoginPage.html')
 
 @app.route('/prf_status')
+@login_required
 def prf_status():
     return render_template('PrfStatus.html')
 
@@ -162,6 +176,7 @@ def registration():
     return render_template('RegistrationPage.html')
 
 @app.route('/clear_database')
+@login_required
 def clear_database():
     try:
         # Delete all rows in the User table
@@ -173,10 +188,12 @@ def clear_database():
         return f"An error occurred: {str(e)}"
 
 @app.route('/prfsub')
+@login_required
 def prfsub():
     return render_template('prfsub.html')
 
 @app.route('/show_users')
+@login_required
 def show_users():
     users = User.query.all()
     for user in users:
