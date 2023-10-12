@@ -3,6 +3,8 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_mail import Mail, Message
 from itsdangerous import URLSafeTimedSerializer
 from functools import wraps
+from werkzeug.utils import secure_filename
+import os
 
 app = Flask(__name__)
 
@@ -11,6 +13,7 @@ app.secret_key = 'Secret123'
 s = URLSafeTimedSerializer(app.secret_key)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://capstonepro:blowfish-orange-840@mysql.ecn.purdue.edu/capstonepro'
 
+#MAIL INFORMATION
 # Automatic Email Config for Reset Password
 # Setting it to False disables Flask-SQLAlchemy's modification tracking system
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -22,6 +25,8 @@ app.config['MAIL_USE_TLS'] = True
 app.config['MAIL_USE_SSL'] = False
 
 mail = Mail(app)
+
+#DATABASE INFORMATION
 db = SQLAlchemy(app)
 
 class User(db.Model):
@@ -30,7 +35,14 @@ class User(db.Model):
     password = db.Column(db.String(150), nullable=False)
     team_number = db.Column(db.Integer, nullable=False)
 
+#FILE UPLOAD INFORMATION
+UPLOAD_FOLDER = 'uploads'
+ALLOWED_EXTENSIONS = {'xlsx'}
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
 #Functions
+
+#If the user is not logged in they will not be able to access certain pages
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
@@ -175,6 +187,43 @@ def registration():
         return redirect(url_for('login'))  # Redirect to the login page after successful registration
     return render_template('RegistrationPage.html')
 
+
+#PRFSub Endpoints
+@app.route('/prfsub')
+@login_required
+def prfsub():
+    return render_template('prfsub.html')
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+@app.route('/upload', methods=['POST'])
+@login_required
+def upload_file():
+    if not os.path.exists(UPLOAD_FOLDER):
+        os.makedirs(UPLOAD_FOLDER)
+
+    # Check if the post request has the file part
+    if 'file' not in request.files:
+        flash('No file part')
+        return redirect(url_for('prfsub'))
+    file = request.files['file']
+
+    # If user does not select file, browser also submits an empty part without filename
+    if file.filename == '':
+        flash('No selected file')
+        return redirect(url_for('prfsub'))
+
+    if file and allowed_file(file.filename):
+        filename = secure_filename(file.filename)
+        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        flash('File successfully uploaded')
+        return redirect(url_for('prfsub'))
+
+    else:
+        flash('Allowed file types are .xlsx')
+        return redirect(url_for('prfsub'))
+#Maintenence Endpoints
 @app.route('/clear_database')
 @login_required
 def clear_database():
@@ -186,11 +235,6 @@ def clear_database():
     except Exception as e:
         db.session.rollback()
         return f"An error occurred: {str(e)}"
-
-@app.route('/prfsub')
-@login_required
-def prfsub():
-    return render_template('prfsub.html')
 
 @app.route('/show_users')
 @login_required
