@@ -6,6 +6,7 @@
     <title>PRF Submission </title>
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     </head>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
         body {
           margin: 0;
@@ -78,6 +79,13 @@
           left: 550px;
         }
       </style>
+      <script>
+        $(document).ready(function() {
+            $("#file-upload").on("change", function() {
+                $(this).closest("form").submit();
+            });
+        });
+      </script>    
       <body>
         <div class="wrapper">
             <form action="/upload" method="post" enctype="multipart/form-data">
@@ -86,7 +94,7 @@
             
                 <!-- Styled upload button -->
                 <label for="file-upload" class="btn1">Upload .XLSX File</label>
-                <input type="file" id="file-upload" name="file" accept=".xlsx" style="display: none;"> <!-- actual file input -->
+                <input type="file" id="file-upload" name="file" accept=".xlsx" style="display: none;">
                 <i class='bx bx-upload'></i>
             
                 <div>

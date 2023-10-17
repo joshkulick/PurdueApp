@@ -36,7 +36,7 @@ class User(db.Model):
     team_number = db.Column(db.Integer, nullable=False)
 
 #FILE UPLOAD INFORMATION
-UPLOAD_FOLDER = 'uploads'
+UPLOAD_FOLDER = os.getcwd() + r'/uploads'
 ALLOWED_EXTENSIONS = {'xlsx'}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
@@ -200,8 +200,8 @@ def allowed_file(filename):
 @app.route('/upload', methods=['POST'])
 @login_required
 def upload_file():
-    if not os.path.exists(UPLOAD_FOLDER):
-        os.makedirs(UPLOAD_FOLDER)
+    if not os.path.exists(app.config['UPLOAD_FOLDER']):
+        os.makedirs(app.config['UPLOAD_FOLDER'])
 
     # Check if the post request has the file part
     if 'file' not in request.files:
@@ -223,6 +223,7 @@ def upload_file():
     else:
         flash('Allowed file types are .xlsx')
         return redirect(url_for('prfsub'))
+    
 #Maintenence Endpoints
 @app.route('/clear_database')
 @login_required
