@@ -6,6 +6,9 @@ from functools import wraps
 from werkzeug.utils import secure_filename
 import os
 
+#Local Imports
+from PRFSub_lib import digestFileContents
+
 app = Flask(__name__)
 
 app.secret_key = 'Secret123'
@@ -39,6 +42,16 @@ class Team(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     team_number = db.Column(db.Integer, nullable=False)
     team_name = db.Column(db.String(255), nullable=False)
+
+class Item(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    Item_Description = db.Column(db.String(255), nullable=False)
+    Part_Number = db.Column(db.String(50), nullable=True)
+    Quantity = db.Column(db.Integer, nullable=True)
+    Unit_Price = db.Column(db.Float, nullable=True)
+    Ext_Price = db.Column(db.Float, nullable=True)
+    URL_Link = db.Column(db.String(255), nullable=True)
+    Delivery_Date = db.Column(db.DateTime, nullable=True)
 
 #FILE UPLOAD INFORMATION
 UPLOAD_FOLDER = os.getcwd() + r'/uploads'
@@ -254,6 +267,7 @@ def upload_file():
 
 #PRF Status Endpoints
 @app.route('/prf_status')
+@login_required
 def prf_status():
     # Query the database to retrieve the form data for the current team
     form_data = db.query.filter_by(team_number=team_number).first()
