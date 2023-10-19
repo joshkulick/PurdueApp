@@ -35,6 +35,11 @@ class User(db.Model):
     password = db.Column(db.String(150), nullable=False)
     team_number = db.Column(db.Integer, nullable=False)
 
+class Team(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    team_number = db.Column(db.Integer, nullable=False)
+    team_name = db.Column(db.String(255), nullable=False)
+
 #FILE UPLOAD INFORMATION
 UPLOAD_FOLDER = os.getcwd() + r'/uploads'
 ALLOWED_EXTENSIONS = {'xlsx'}
@@ -187,6 +192,29 @@ def registration():
         return redirect(url_for('login'))  # Redirect to the login page after successful registration
     return render_template('RegistrationPage.html')
 
+@app.route('/add_team', methods=['POST'])
+def add_team():
+    team_number = request.form.get('team_number')
+    team_name = request.form.get('team_name')
+    team_table_name = f'team_{team_number}'
+
+    # Create a new team-specific table if it doesn't exist
+    if not db.engine.has_table(team_table_name):
+        db.engine.execute(f'''
+            CREATE TABLE {team_table_name} (
+                id INTEGER PRIMARY KEY,
+                date DATE NOT NULL,
+                document VARCHAR(255) NOT NULL,
+                status VARCHAR(50) NOT NULL,
+                comments VARCHAR(255)
+            );
+        ''')
+
+    new_team = Team(team_number=team_number, team_name=team_name)
+    db.session.add(new_team)
+    db.session.commit()
+
+    return redirect(url_for('index'))
 
 #PRFSub Endpoints
 @app.route('/prfsub')
@@ -223,7 +251,20 @@ def upload_file():
     else:
         flash('Allowed file types are .xlsx')
         return redirect(url_for('prfsub'))
-    
+
+#PRF Status Endpoints
+@app.route('/prf_status')
+def prf_status():
+    # Query the database to retrieve the form data for the current team
+    form_data = db.query.filter_by(team_number=team_number).first()
+    # Check if the form data exists
+    if form_data:
+        # Render the template with the form data
+        return render_template('PrfStatus.html', form_data=form_data)
+    else:
+        # Case where form data doesn't exist
+        return "Form data not found for this team."
+
 #Maintenence Endpoints
 @app.route('/clear_database')
 @login_required
