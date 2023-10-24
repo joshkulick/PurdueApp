@@ -265,6 +265,7 @@ def upload_file():
         flash('Allowed file types are .xlsx')
         return redirect(url_for('prfsub'))
 
+'''
 #PRF Status Endpoints
 @app.route('/prf_status')
 @login_required
@@ -278,7 +279,7 @@ def prf_status():
     else:
         # Case where form data doesn't exist
         return "Form data not found for this team."
-
+'''
 #Maintenence Endpoints
 @app.route('/clear_database')
 @login_required

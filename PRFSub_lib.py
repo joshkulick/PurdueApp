@@ -13,11 +13,16 @@ def digestFileContents():
     target_row = next((i for i, row in df.iterrows() if "Do not alter form, especially formulas" in row.astype(str).values), None)
     if target_row is None:
         print("Target string not found.")
-        return
+        UserError = True
+
+    BlowUp
+    print(df.iloc[target_row].astype(str).explode())
+
 
     #Sort into 2d array with some sorting
     for i in range(2, target_row):
         line = df.iloc[i]
+        print(line)
         fields = line.astype(str).explode()  # Convert line to string before splitting
         for GetVals in fields.iloc[1:]: 
             if (i == 2 and (GetVals != 'Item')):
@@ -25,6 +30,7 @@ def digestFileContents():
             elif (GetVals != 'nan' and (GetVals != '0')) :
                 PRF_List[position][1].append(GetVals)
                 position += 1
+            
         position = 0
 
     #check that all categories contrain the same number of values, otherwise throw an error
@@ -32,8 +38,8 @@ def digestFileContents():
     if all(length == inner_list_lengths[0] for length in inner_list_lengths) == False:
         UserError = True
 
-    print(UserError)
-    print(PRF_List)
+    #print(UserError)
+    #print(PRF_List)
     # Print the rows up to the target_row
     #print(df.iloc[3:target_row])
 
