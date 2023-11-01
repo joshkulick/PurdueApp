@@ -4,7 +4,9 @@ from flask_mail import Mail, Message
 from itsdangerous import URLSafeTimedSerializer
 from functools import wraps
 from werkzeug.utils import secure_filename
+from pathlib import Path
 import os
+from datetime import datetime
 
 #Local Imports
 from PRFSub_lib import digestFileContents
@@ -52,7 +54,20 @@ class Item(db.Model):
     Ext_Price = db.Column(db.Float, nullable=True)
     URL_Link = db.Column(db.String(255), nullable=True)
     Delivery_Date = db.Column(db.DateTime, nullable=True)
-
+    
+class team_procurement_detail(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    team_number = db.Column(db.Integer, index=True, nullable=False)
+    item_description = db.Column(db.String(255), nullable=False)
+    part_number = db.Column(db.String(50), nullable=True)
+    quantity = db.Column(db.Integer, nullable=True)
+    unit_price = db.Column(db.Float, nullable=True)
+    ext_price = db.Column(db.Float, nullable=True)
+    url_link = db.Column(db.String(255), nullable=True)
+    delivery_date = db.Column(db.DateTime, nullable=True)
+    file_last_modified = db.Column(db.DateTime, nullable=True)  # Last modification date of the file
+    total_file_price = db.Column(db.Float, nullable=True)  # Total price from file details
+    created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)  # Timestamp of record creation
 #FILE UPLOAD INFORMATION
 UPLOAD_FOLDER = os.getcwd() + r'/uploads'
 ALLOWED_EXTENSIONS = {'xlsx'}
@@ -258,7 +273,9 @@ def upload_file():
     if file and allowed_file(file.filename):
         filename = secure_filename(file.filename)
         file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
         flash('File successfully uploaded')
+        digestFileContents(file_path)
         return redirect(url_for('prfsub'))
 
     else:
