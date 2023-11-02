@@ -4,12 +4,11 @@ from flask_mail import Mail, Message
 from itsdangerous import URLSafeTimedSerializer
 from functools import wraps
 from werkzeug.utils import secure_filename
-from pathlib import Path
 import os
 from datetime import datetime
 
 #Local Imports
-from PRFSub_lib import digestFileContents
+from PRFSub_lib import digestFileContents, store_parsed_data, restructure_data, extract_file_details
 
 app = Flask(__name__)
 
@@ -73,7 +72,6 @@ UPLOAD_FOLDER = os.getcwd() + r'/uploads'
 ALLOWED_EXTENSIONS = {'xlsx'}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-#Functions
 
 #If the user is not logged in they will not be able to access certain pages
 def login_required(f):
@@ -273,14 +271,30 @@ def upload_file():
     if file and allowed_file(file.filename):
         filename = secure_filename(file.filename)
         file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-        file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-        flash('File successfully uploaded')
-        digestFileContents(file_path)
+        # Fetch the current user's team number
+        user_id = session.get('user_id')
+        current_user = db.session.get(User, user_id)
+        print(current_user)
+        if current_user:
+            team_number = current_user.team_number
+            file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            flash('File successfully uploaded')
+            DataInstance = digestFileContents(file_path)
+            file_details = extract_file_details(DataInstance[1])
+            print(file_details)
+            restructured_list = restructure_data(DataInstance[1], file_details)
+            print(restructured_list)
+            store_parsed_data(DataInstance[1], team_number, team_procurement_detail,restructured_list,db)
+            flash('File successfully uploaded')
+        else:
+            flash('Error: User not found.')
         return redirect(url_for('prfsub'))
 
     else:
         flash('Allowed file types are .xlsx')
         return redirect(url_for('prfsub'))
+
+
 
 '''
 #PRF Status Endpoints
