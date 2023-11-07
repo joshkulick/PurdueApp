@@ -332,5 +332,20 @@ def show_users():
         print(f"ID: {user.id}, Email: {user.email}, Password: {user.password}, Team Number: {user.team_number}")
     return "Users printed in console", 200
 
+@app.route('/')
+@login_required
+def root():
+    return redirect(url_for('home'))
+
+@app.route('/adminview')
+@login_required
+def adminview():
+    return render_template('adminview.html')
+
+@app.route('/<path:unknown_route>', methods=['GET'])
+def catch_all(unknown_route):
+    # Redirect all unknown routes to the homepage
+    return redirect(url_for('home'))
+
 if __name__ == '__main__':
     app.run(debug=True)
