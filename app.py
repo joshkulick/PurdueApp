@@ -5,14 +5,20 @@ from itsdangerous import URLSafeTimedSerializer
 from functools import wraps
 from werkzeug.utils import secure_filename
 import os
-from datetime import datetime
+from datetime import datetime, timedelta
+import pytz
 
 #Local Imports
 from PRFSub_lib import digestFileContents, store_parsed_data, restructure_data, extract_file_details
 
-app = Flask(__name__)
 
+#=============== APP CONFIG======================#
+app = Flask(__name__)
 app.secret_key = 'Secret123'
+
+#Defines after how many minutes of inactivity it will tolerate before ending the session
+INACTIVE_TIMEOUT = timedelta(minutes=45)
+
 # Create a serializer
 s = URLSafeTimedSerializer(app.secret_key)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://capstonepro:blowfish-orange-840@mysql.ecn.purdue.edu/capstonepro'
@@ -88,6 +94,29 @@ def login_required(f):
 def home():
     return render_template('HomePage.html')
 
+@app.before_request
+def before_request():
+    session.permanent = True
+    app.permanent_session_lifetime = INACTIVE_TIMEOUT
+
+    if 'last_activity' in session:
+        last_activity = session['last_activity']
+
+        # Convert to offset-naive datetime if it's offset-aware
+        if last_activity.tzinfo is not None and last_activity.tzinfo.utcoffset(last_activity) is not None:
+            last_activity = last_activity.replace(tzinfo=None)
+
+        now_utc = datetime.utcnow()
+
+        if now_utc - last_activity > INACTIVE_TIMEOUT:
+            session.pop('user_id', None)
+            session.pop('last_activity', None)
+            flash('You have been logged out due to inactivity.', 'info')
+            return redirect(url_for('login'))
+
+    session['last_activity'] = datetime.utcnow()
+
+
 @app.route('/logged_out')
 def logged_out():
     session.pop('user_id', None)
@@ -157,7 +186,7 @@ def reset_password(token):
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    print(request.form)
+    #print(request.form)
     if request.method == 'POST':
         #Get information from form
         email = request.form.get('email')
@@ -294,8 +323,6 @@ def upload_file():
         flash('Allowed file types are .xlsx')
         return redirect(url_for('prfsub'))
 
-
-
 '''
 #PRF Status Endpoints
 @app.route('/prf_status')
@@ -312,17 +339,6 @@ def prf_status():
         return "Form data not found for this team."
 '''
 #Maintenence Endpoints
-@app.route('/clear_database')
-@login_required
-def clear_database():
-    try:
-        # Delete all rows in the User table
-        num_rows_deleted = db.session.query(User).delete()
-        db.session.commit()
-        return f"Successfully deleted {num_rows_deleted} rows."
-    except Exception as e:
-        db.session.rollback()
-        return f"An error occurred: {str(e)}"
 
 @app.route('/show_users')
 @login_required
