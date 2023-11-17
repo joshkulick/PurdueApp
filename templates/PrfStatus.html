@@ -17,7 +17,7 @@
     align-items: center;
     justify-content: center;
     font-family: Arial, sans-serif;
-    color: black;
+    color: rgb(230, 184, 100);
   }
 
   h1 {
@@ -76,10 +76,15 @@
 <title>PRF Status</title>
 </head>
 <body>
-<img class="logo" src="Purdue_Boilermakers_logo.svg" alt="Purdue University Logo">
-
+  <a href="{{ url_for('home') }}">
+  <img class="logo" src="static/Purdue_Boilermakers_logo.svg" alt="Purdue University Logo">
+  </a>
 <h1>Parts Requisition Form Status</h1>
-
+<form>
+<div class="button-container"></div>
+  <button type="button" onclick="getdata()">Team PRF</button>
+</div>
+</form>
 <table id="statusTable">
   <thead>
     <tr>
@@ -90,13 +95,23 @@
     </tr>
   </thead>
   <tbody>
-    <!-- Data will be inserted here dynamically using JavaScript -->
+    <tr>
+      <td>11/07/23</td>
+      <td>F23_T100_PRF_Purdue</td>
+      <td>
+        <select>
+          <option value="status1">Approved</option>
+          <option value="status2">Not Approved</option>
+        </select>
+      </td>
+    </tr>
   </tbody>
 </table>
 
 <div class="button-container">
   <button id="see-more-button" class="see-more-button">See More</button>
 </div>
+
 
 <script>
   // Function to add a row to the table
@@ -121,6 +136,22 @@
       addRowToTable('', '', '', ''); // Add empty rows for now; you can populate them with data later
     }
   }
+  function getdata() {
+  fetch('/PrfStatus')
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok.');
+      }
+      return response.json();
+    })
+    .then(data => {
+      console.log(data); // Check the parsed JSON data
+      // Process the data as needed
+    })
+    .catch(error => {
+      console.error('Fetch error:', error);
+    });
+}
 
   // Event listener for the "See More" button
   const seeMoreButton = document.getElementById('see-more-button');

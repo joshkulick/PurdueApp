@@ -358,6 +358,16 @@ def root():
 def adminview():
     return render_template('adminview.html')
 
+@app.route('/prf_status')
+@login_required
+def prfstatus():
+    return render_template('PrfStatus.html')
+
+@app.route('/BOMlist')
+@login_required
+def bomlist():
+    return render_template('Bomlist.html')
+
 @app.route('/<path:unknown_route>', methods=['GET'])
 def catch_all(unknown_route):
     # Redirect all unknown routes to the homepage
