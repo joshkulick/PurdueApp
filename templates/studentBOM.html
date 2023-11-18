@@ -74,40 +74,51 @@
     background-color: #f2f2f2;
   }
 </style>
-<title>PRF Status</title>
+<title>BOM</title>
 </head>
 <body>
   <a href="{{ url_for('home') }}">
   <img class="logo" src="static/Purdue_Boilermakers_logo.svg" alt="Purdue University Logo">
   </a>
-<h1>Parts Requisition Form Status</h1>
-<form>
-<div class="button-container"></div>
-  <button type="button" onclick="getdata()">Team PRF</button>
-</div>
-</form>
+<h1>Bill of Materials</h1>
+<th>Team 10</th>
+
+
 <table id="statusTable">
   <thead>
     <tr>
-      <th>Date</th>
-      <th>Document Name</th>
+      <th>Vendor</th>
+      <th>Item #</th>
       <th>Status</th>
+      <th>Date</th>
       <th>Comments</th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <td>11/07/23</td>
-      <td>F23_T100_PRF_Purdue</td>
-      <td>
-        <select>
-          <option value="status1">Approved</option>
-          <option value="status2">Not Approved</option>
-        </select>
-      </td>
+      <td>Amazon</td>
+      <td>Pipe Cleaner</td>
+      <td>Ordered</td>
+      <td>2023-11-09</td>
       <td> </td>
-      
+      </td>
     </tr>
+    <tr>
+      <td>Digikey</td>
+      <td>Transistor</td>
+      <td>Shipped</td>
+      <td>2023-11-10</td>
+      <td> </td>
+      </td>
+    </tr>
+    <tr>
+        <td>Digikey</td>
+        <td>Switch</td>
+        <td>Delivered</td>
+        <td>2023-11-11</td>
+        <td> </td>
+        </td>
+      </tr>
   </tbody>
 </table>
 
@@ -117,30 +128,34 @@
 
 
 <script>
-  // Function to add a row to the table
-  function addRowToTable(date, documentName, status, comments) {
-    const tableBody = document.getElementById('statusTable').getElementsByTagName('tbody')[0];
-    const newRow = tableBody.insertRow(tableBody.rows.length);
-    const dateCell = newRow.insertCell(0);
-    const documentNameCell = newRow.insertCell(1);
-    const statusCell = newRow.insertCell(2);
-    const commentsCell = newRow.insertCell(3);
-
-    dateCell.innerHTML = date;
-    documentNameCell.innerHTML = documentName;
-    statusCell.innerHTML = status;
-    commentsCell.innerHTML = comments;
-  }
-
-  // Function to expand the table by adding 10 empty rows
-  function expandTable() {
-    const numRowsToAdd = 10; // Number of rows to add
-    for (let i = 0; i < numRowsToAdd; i++) {
-      addRowToTable('', '', '', ''); // Add empty rows for now; you can populate them with data later
+    // Function to add a row to the table
+    function addRowToTable(vendor, itemNumber, itemStatus, date, comments) {
+      const tableBody = document.getElementById('statusTable').getElementsByTagName('tbody')[0];
+      const newRow = tableBody.insertRow(tableBody.rows.length);
+  
+      const vendorCell = newRow.insertCell(0);
+      const itemNumberCell = newRow.insertCell(1);
+      const itemStatusCell = newRow.insertCell(2);
+      const dateCell = newRow.insertCell(3);
+      const commentsCell = newRow.insertCell(4);
+  
+      vendorCell.innerHTML = vendor;
+      itemNumberCell.innerHTML = itemNumber;
+      itemStatusCell.innerHTML = itemStatus;
+      dateCell.innerHTML = date;
+      commentsCell.innerHTML = comments;
     }
-  }
+  
+    // Function to expand the table by adding 10 empty rows
+    function expandTable() {
+      const numRowsToAdd = 1; // Number of rows to add
+      for (let i = 0; i < numRowsToAdd; i++) {
+        addRowToTable('Temu' , 'Chicken Costume' , 'Shipped' , '2023-11-12', ''); // Add empty rows for now; you can populate them with data later
+      }
+    }
+  
   function getdata() {
-  fetch('/PrfStatus')
+  fetch('/BOMlist')
     .then(response => {
       if (!response.ok) {
         throw new Error('Network response was not ok.');

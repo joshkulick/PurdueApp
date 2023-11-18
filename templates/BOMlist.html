@@ -1,109 +1,190 @@
 <!DOCTYPE html>
-<html>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BOM View </title>
+<html lang="en">
 <head>
-    <style>
-        body {
-          margin: 0;
-          padding: 0;
-          box-sizing: border-box;
-          background-color: #D6D6D6;
-          background: linear-gradient(to bottom, black 0%, #D6D6D6 50%);
-          background-size: 100% 300%;
-          transition: background-position 0.5s;
-          min-height: 100vh;
-          font-family: Arial, sans-serif;
-          color: white;
-        }
-        
-        
-        .logo{
-            margin-top: 100px;
-            width: 300px;
-            margin-left: auto;
-            margin-right: auto;
-            display: block;
-    
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    background-color: #D6D6D6;
+    background: linear-gradient(to bottom, black 0%, #D6D6D6 50%);
+    background-size: 100% 300%;
+    transition: background-position 0.5s;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: Arial, sans-serif;
+    color: rgb(230, 184, 100);
   }
-   h1{
-            font-size: 40px;
-            text-align: center;
-            align-items: center;
-        }
-        table {
-    border-collapse: collapse;
-    width:100%;
-       
-}
-th, td {
-    border: 1px solid #ddd;
-    padding: 8px;
-    text-align: left;
-}
-th {
-    background-color: darkgray; 
-    color: white;
-}
-tr:nth-child(even) {
-    background-color: #f2f2f255; 
-}
-    </style>
-</head>
 
+  h1 {
+    color: rgb(230, 184, 100);
+    text-align: center;
+    margin-top: 30px; /* Increased top margin */
+  }
+
+  .logo {
+    width: 300px;
+    margin-top: 20px;
+  }
+
+  .button-container {
+    margin-top: 20px;
+    text-align: center;
+  }
+
+  .see-more-button {
+    margin-top: 20px;
+    display: inline-block;
+    padding: 15px 30px;
+    font-size: 18px;
+    background-color: rgb(191, 150, 74);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  .see-more-button:hover {
+    background-color: rgb(230, 184, 100);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+
+  th, td {
+    padding: 10px;
+    text-align: left;
+    border: 1px solid #ddd; /* Add borders to separate columns */
+  }
+
+  th {
+    background-color: #333;
+    color: white;
+  }
+
+  tr:nth-child(even) {
+    background-color: #f2f2f2;
+  }
+</style>
+<title>BOM</title>
+</head>
 <body>
-   
-    <a href="{{ url_for('home') }}">
-        <img class="logo" src="static/Purdue_Boilermakers_logo.svg" alt="Purdue University Logo">
-        </a>
-        <h1>Bill of Materials</h1>
-        <div class="dropdown">
-            <label for="filter">Team:</label>
-            <select id="filter" name="team name">
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-            </select>
-        </div>
-    <table  style="left: 100%">
-            
-        <tr>
-            <th>Item </th>
-            <th>Item#</th>
-            <th>Status</th>
-            <th>Date</th>
-            <th>Comments</th>
+  <a href="{{ url_for('home') }}">
+  <img class="logo" src="static/Purdue_Boilermakers_logo.svg" alt="Purdue University Logo">
+  </a>
+<h1>Bill of Materials</h1>
+
+<div class="dropdown">
+    <label for="filter">Team:</label>
+    <select id="filter" name="team name">
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+    </select>
+</div>
+
+<table id="statusTable">
+    <thead>
+      <tr>
+        <th>Vendor</th>
+        <th>Item #</th>
+        <th>Status</th>
+        <th>Date</th>
+        <th>Comments</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Amazon</td>
+        <td>Pipe Cleaner</td>
+        <td>Ordered</td>
+        <td>2023-11-09</td>
+        <td> </td>
+        </td>
+      </tr>
+      <tr>
+        <td>Digikey</td>
+        <td>Transistor</td>
+        <td>Shipped</td>
+        <td>2023-11-10</td>
+        <td> </td>
+        </td>
+      </tr>
+      <tr>
+          <td>Digikey</td>
+          <td>Switch</td>
+          <td>Delivered</td>
+          <td>2023-11-11</td>
+          <td> </td>
+          </td>
         </tr>
-        <tr>
-            <td>Item 1</td>
-            <td>1</td>
-            <td>Active</td>
-            <td>2023-09-01</td>
-            <td>Comment 1</td>
-        </tr>
-        <tr>
-            <td>Item 2</td>
-            <td>2</td>
-            <td>Inactive</td>
-            <td>2023-09-16</td>
-            <td>Comment 2</td>
-        </tr>
-        <tr>
-            <td>Item 3</td>
-            <td>3</td>
-            <td>Active</td>
-            <td>2023-09-18</td>
-            <td>Comment 3</td>
-        </tr>
-        <tr>
-            <td>Item 4</td>
-            <td>4</td>
-            <td>Inactive</td>
-            <td>2023-09-14</td>
-            <td>Comment 4</td>
-        </tr>
+    </tbody>
+  </table>
+  
+  <div class="button-container">
+    <button id="see-more-button" class="see-more-button">See More</button>
+  </div>
+  
+  
+  <script>
+      // Function to add a row to the table
+      function addRowToTable(vendor, itemNumber, itemStatus, date, comments) {
+        const tableBody = document.getElementById('statusTable').getElementsByTagName('tbody')[0];
+        const newRow = tableBody.insertRow(tableBody.rows.length);
     
-    </table>
+        const vendorCell = newRow.insertCell(0);
+        const itemNumberCell = newRow.insertCell(1);
+        const itemStatusCell = newRow.insertCell(2);
+        const dateCell = newRow.insertCell(3);
+        const commentsCell = newRow.insertCell(4);
+    
+        vendorCell.innerHTML = vendor;
+        itemNumberCell.innerHTML = itemNumber;
+        itemStatusCell.innerHTML = itemStatus;
+        dateCell.innerHTML = date;
+        commentsCell.innerHTML = comments;
+      }
+    
+      // Function to expand the table by adding 10 empty rows
+      function expandTable() {
+        const numRowsToAdd = 1; // Number of rows to add
+        for (let i = 0; i < numRowsToAdd; i++) {
+          addRowToTable('Temu' , 'Chicken Costume' , 'Shipped' , '2023-11-12', ''); // Add empty rows for now; you can populate them with data later
+        }
+      }
+  
+  
+  function getdata() {
+  fetch('/BOMlist')
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok.');
+      }
+      return response.json();
+    })
+    .then(data => {
+      console.log(data); // Check the parsed JSON data
+      // Process the data as needed
+    })
+    .catch(error => {
+      console.error('Fetch error:', error);
+    });
+}
+
+  // Event listener for the "See More" button
+  const seeMoreButton = document.getElementById('see-more-button');
+  seeMoreButton.addEventListener('click', function() {
+    expandTable();
+  });
+
+</script>
 </body>
 </html>

@@ -59,6 +59,14 @@ class Item(db.Model):
     Ext_Price = db.Column(db.Float, nullable=True)
     URL_Link = db.Column(db.String(255), nullable=True)
     Delivery_Date = db.Column(db.DateTime, nullable=True)
+
+class BOM(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    vendor = db.Column(db.String(150))
+    item_number = db.Column(db.String(50))
+    item_status = db.Column(db.String(50))
+    date = db.Column(db.DateTime)
+    comments = db.Column(db.String(255), nullable=True)
     
 class team_procurement_detail(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -73,6 +81,7 @@ class team_procurement_detail(db.Model):
     file_last_modified = db.Column(db.DateTime, nullable=True)  # Last modification date of the file
     total_file_price = db.Column(db.Float, nullable=True)  # Total price from file details
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)  # Timestamp of record creation
+
 #FILE UPLOAD INFORMATION
 UPLOAD_FOLDER = os.getcwd() + r'/uploads'
 ALLOWED_EXTENSIONS = {'xlsx'}
@@ -366,7 +375,7 @@ def prfstatus():
 @app.route('/BOMlist')
 @login_required
 def bomlist():
-    return render_template('Bomlist.html')
+    return render_template('BOMlist.html')
 
 @app.route('/<path:unknown_route>', methods=['GET'])
 def catch_all(unknown_route):
