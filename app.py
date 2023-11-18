@@ -377,6 +377,11 @@ def prfstatus():
 def bomlist():
     return render_template('BOMlist.html')
 
+@app.route('/StudentBOM')
+@login_required
+def bomlist():
+    return render_template('StudentBOM.html')
+
 @app.route('/<path:unknown_route>', methods=['GET'])
 def catch_all(unknown_route):
     # Redirect all unknown routes to the homepage
