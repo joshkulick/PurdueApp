@@ -342,16 +342,12 @@ def bomlist():
     #get team # from current session
     user_id = session.get('user_id')
     current_user = db.session.get(User, user_id)
-    #team_num = current_user.team_number
-    team_num = 21
+    team_num = current_user.team_number
     # Get records from TeamProcurementDetail
     team_details = team_procurement_detail.query.all()
     # Update BOM records based on TeamProcurementDetail
     for team_detail in team_details:
-        bom_record = BOM(team_number=team_num)
-        print("1")
-       # print(bom_record.query.filter_by(team_number=team_num))
-        
+        bom_record = BOM(team_number=team_num)        
         # bom_record.vendor = team_detail.vendor
         bom_record.date = team_detail.delivery_date
         bom_record.part_number = team_detail.part_number
