@@ -11,6 +11,37 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  # To suppress a warning me
 db = SQLAlchemy(app)
 
 # Define the Items table
+
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    email = db.Column(db.String(150), nullable=False, unique=True)
+    password = db.Column(db.String(150), nullable=False)
+    team_number = db.Column(db.Integer, nullable=False)
+
+class Team(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    team_number = db.Column(db.Integer, nullable=False)
+    team_name = db.Column(db.String(255), nullable=False)
+
+class Item(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    Item_Description = db.Column(db.String(255), nullable=False)
+    Part_Number = db.Column(db.String(50), nullable=True)
+    Quantity = db.Column(db.Integer, nullable=True)
+    Unit_Price = db.Column(db.Float, nullable=True)
+    Ext_Price = db.Column(db.Float, nullable=True)
+    URL_Link = db.Column(db.String(255), nullable=True)
+    Delivery_Date = db.Column(db.DateTime, nullable=True)
+
+class BOM(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    team_number = db.Column(db.Integer, index=True, nullable=False)
+    vendor = db.Column(db.String(150), nullable=True)
+    part_number = db.Column(db.String(50), nullable=True)
+    item_status = db.Column(db.String(50), nullable=True)
+    date = db.Column(db.DateTime, nullable=True)
+    comments = db.Column(db.String(255), nullable=True)
+
 class TeamProcurementDetail(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     team_number = db.Column(db.Integer, index=True, nullable=False)
@@ -28,6 +59,7 @@ class TeamProcurementDetail(db.Model):
 # This function will create the table in the database
 def create_table():
     db.create_all()
+    db.create_all(bind=['BOM'])
 
 if __name__ == '__main__':
     with app.app_context():

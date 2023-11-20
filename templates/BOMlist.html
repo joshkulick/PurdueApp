@@ -82,14 +82,19 @@
   </a>
 <h1>Bill of Materials</h1>
 
-<div class="dropdown">
-    <label for="filter">Team:</label>
-    <select id="filter" name="team name">
-        <option value="1">1</option>
-        <option value="2">2</option>
-        <option value="3">3</option>
-    </select>
-</div>
+  <label for="Team">Team</label>
+  <input type="text" id="Team" name="Team" placeholder="Team">
+  <script>
+    let input_team_num = ''
+    const admin_team_num = document.getElementById('Team')
+    teamInput.addEventListener('input', function(event) {
+        // Update the variable with the current input value
+        userInput = event.target.value;
+
+        // You can log the value to the console for testing
+        console.log('User input:', userInput);
+    });
+  </script>
 
 <table id="statusTable">
     <thead>
@@ -101,82 +106,53 @@
         <th>Comments</th>
       </tr>
     </thead>
+
     <tbody>
-      <tr>
-        <td>Amazon</td>
-        <td>Pipe Cleaner</td>
-        <td>Ordered</td>
-        <td>2023-11-09</td>
-        <td> </td>
-        </td>
-      </tr>
-      <tr>
-        <td>Digikey</td>
-        <td>Transistor</td>
-        <td>Shipped</td>
-        <td>2023-11-10</td>
-        <td> </td>
-        </td>
-      </tr>
-      <tr>
-          <td>Digikey</td>
-          <td>Switch</td>
-          <td>Delivered</td>
-          <td>2023-11-11</td>
-          <td> </td>
-          </td>
-        </tr>
+      {% for bom_record in bom_records %}
+          <tr>
+              <td> bing bong </td>
+              <td>{{ bom_record.part_number }}</td>
+              <td>
+                <div class="dropdown">
+                  <label for="filter">Status:</label>
+                  <select id="filter" name="status">
+                      <option value="Ordered">Ordered</option>
+                      <option value="Shipped">Shipped</option>
+                      <option value="Delivered">Delivered</option>
+                  </select>
+              </div>
+              </td>
+              <td>{{ bom_record.date }}</td>
+              <td>
+                <label for="Comments">Comments</label>
+                <input type="text" id="Comments" name="Comments" placeholder="Comments">
+              </td>
+          </tr>
+      {% endfor %}
     </tbody>
-  </table>
+</table>
   
   <div class="button-container">
     <button id="see-more-button" class="see-more-button">See More</button>
   </div>
   
   
-  <script>
-      // Function to add a row to the table
-      function addRowToTable(vendor, itemNumber, itemStatus, date, comments) {
-        const tableBody = document.getElementById('statusTable').getElementsByTagName('tbody')[0];
-        const newRow = tableBody.insertRow(tableBody.rows.length);
-    
-        const vendorCell = newRow.insertCell(0);
-        const itemNumberCell = newRow.insertCell(1);
-        const itemStatusCell = newRow.insertCell(2);
-        const dateCell = newRow.insertCell(3);
-        const commentsCell = newRow.insertCell(4);
-    
-        vendorCell.innerHTML = vendor;
-        itemNumberCell.innerHTML = itemNumber;
-        itemStatusCell.innerHTML = itemStatus;
-        dateCell.innerHTML = date;
-        commentsCell.innerHTML = comments;
-      }
-    
-      // Function to expand the table by adding 10 empty rows
-      function expandTable() {
-        const numRowsToAdd = 1; // Number of rows to add
-        for (let i = 0; i < numRowsToAdd; i++) {
-          addRowToTable('Temu' , 'Chicken Costume' , 'Shipped' , '2023-11-12', ''); // Add empty rows for now; you can populate them with data later
-        }
-      }
-  
-  
-  function getdata() {
-  fetch('/BOMlist')
-    .then(response => {
-      if (!response.ok) {
-        throw new Error('Network response was not ok.');
-      }
-      return response.json();
-    })
-    .then(data => {
-      console.log(data); // Check the parsed JSON data
-      // Process the data as needed
-    })
-    .catch(error => {
-      console.error('Fetch error:', error);
-    });
+<script>
+function getdata() {
+fetch('/BOMlist')
+  .then(response => {
+    if (!response.ok) {
+      throw new Error('Network response was not ok.');
+    }
+    return response.json();
+  })
+  .then(data => {
+    console.log(data); // Check the parsed JSON data
+    // Process the data as needed
+  })
+  .catch(error => {
+    console.error('Fetch error:', error);
+  });
 }
 
   // Event listener for the "See More" button

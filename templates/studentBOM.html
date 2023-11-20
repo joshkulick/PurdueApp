@@ -94,31 +94,40 @@
       <th>Comments</th>
     </tr>
   </thead>
-  <tbody>
-    <tr>
-      <td>Amazon</td>
-      <td>Pipe Cleaner</td>
-      <td>Ordered</td>
-      <td>2023-11-09</td>
-      <td> </td>
-      </td>
-    </tr>
-    <tr>
-      <td>Digikey</td>
-      <td>Transistor</td>
-      <td>Shipped</td>
-      <td>2023-11-10</td>
-      <td> </td>
-      </td>
-    </tr>
-    <tr>
-        <td>Digikey</td>
-        <td>Switch</td>
-        <td>Delivered</td>
-        <td>2023-11-11</td>
+<!--<tbody>
+      <tr>
+        <td>Amazon</td>
+        <td>Pipe Cleaner</td>
+        <td>Ordered</td>
+        <td>2023-11-09</td>
         <td> </td>
         </td>
       </tr>
+      <tr>
+        <td>Digikey</td>
+        <td>Transistor</td>
+        <td>Shipped</td>
+        <td>2023-11-10</td>
+        <td> </td>
+        </td>
+      </tr>
+      <tr>
+          <td>Digikey</td>
+          <td>Switch</td>
+          <td>Delivered</td>
+          <td>2023-11-11</td>
+          <td> </td>
+          </td>
+        </tr>
+    </tbody>-->
+  <tbody>
+    <tr>
+        <td>{{ item.vendor }}</td>
+        <td>{{ item.item_number }}</td>
+        <td>{{ item.item_status }}</td>
+        <td>{{ item.date }}</td>
+        <td>{{ item.comments }}</td>
+    </tr>
   </tbody>
 </table>
 
@@ -126,7 +135,7 @@
   <button id="see-more-button" class="see-more-button">See More</button>
 </div>
 
-
+<!---->
 <script>
     // Function to add a row to the table
     function addRowToTable(vendor, itemNumber, itemStatus, date, comments) {

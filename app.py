@@ -62,10 +62,11 @@ class Item(db.Model):
 
 class BOM(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    vendor = db.Column(db.String(150))
-    item_number = db.Column(db.String(50))
-    item_status = db.Column(db.String(50))
-    date = db.Column(db.DateTime)
+    team_number = db.Column(db.Integer, index=True, nullable=False)
+    vendor = db.Column(db.String(150), nullable=True)
+    part_number = db.Column(db.String(50), nullable=True)
+    item_status = db.Column(db.String(50), nullable=True)
+    date = db.Column(db.DateTime, nullable=True)
     comments = db.Column(db.String(255), nullable=True)
     
 class team_procurement_detail(db.Model):
@@ -86,7 +87,6 @@ class team_procurement_detail(db.Model):
 UPLOAD_FOLDER = os.getcwd() + r'/uploads'
 ALLOWED_EXTENSIONS = {'xlsx'}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-
 
 #If the user is not logged in they will not be able to access certain pages
 def login_required(f):
@@ -322,7 +322,7 @@ def upload_file():
             print(file_details)
             restructured_list = restructure_data(DataInstance[1], file_details)
             print(restructured_list)
-            store_parsed_data(DataInstance[1], team_number, team_procurement_detail,restructured_list,db)
+            store_parsed_data(DataInstance[1], team_number, team_procurement_detail, restructured_list, db)
             flash('File successfully uploaded')
         else:
             flash('Error: User not found.')
@@ -331,6 +331,60 @@ def upload_file():
     else:
         flash('Allowed file types are .xlsx')
         return redirect(url_for('prfsub'))
+
+#BOM Endpoints
+
+
+    #BOMlist
+@app.route('/BOMlist', methods=['GET', 'POST'])
+@login_required
+def bomlist():
+    #get team # from current session
+    user_id = session.get('user_id')
+    current_user = db.session.get(User, user_id)
+    #team_num = current_user.team_number
+    team_num = 21
+    # Get records from TeamProcurementDetail
+    team_details = team_procurement_detail.query.all()
+    # Update BOM records based on TeamProcurementDetail
+    for team_detail in team_details:
+        bom_record = BOM(team_number=team_num)
+        print("1")
+       # print(bom_record.query.filter_by(team_number=team_num))
+        
+        # bom_record.vendor = team_detail.vendor
+        bom_record.date = team_detail.delivery_date
+        bom_record.part_number = team_detail.part_number
+        print(bom_record.part_number)
+
+        # Commit the changes
+        db.session.commit()
+    return render_template('BOMlist.html', bom_record=bom_record)
+ 
+    #StudentBOM
+@app.route('/StudentBOM', methods=['GET', 'POST'])
+@login_required
+def studentbom():
+        #get team # from current session
+    team_number = session.get('team_number')
+        # Get records from TeamProcurementDetail
+    team_details = team_procurement_detail.query.all()
+
+    # Update BOM records based on TeamProcurementDetail
+    for team_detail in team_details:
+        bom_record = BOM.query.filter_by(team_number=team_detail.team_number).first()
+        
+        # Update BOM record with values from TeamProcurementDetail
+        if bom_record:
+           # bom_record.vendor = team_detail.vendor
+            bom_record.date = team_detail.delivery_date
+            bom_record.part_number = team_detail.part_number
+
+
+    # Commit the changes
+    db.session.commit()
+    bom_record = BOM.query.all()
+    return render_template('StudentBOM.html', team_number=team_number, bom_record=bom_record)
 
 '''
 #PRF Status Endpoints
@@ -371,16 +425,6 @@ def adminview():
 @login_required
 def prfstatus():
     return render_template('PrfStatus.html')
-
-@app.route('/BOMlist')
-@login_required
-def bomlist():
-    return render_template('BOMlist.html')
-
-@app.route('/StudentBOM')
-@login_required
-def bomlist():
-    return render_template('StudentBOM.html')
 
 @app.route('/<path:unknown_route>', methods=['GET'])
 def catch_all(unknown_route):
