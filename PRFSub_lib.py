@@ -1,5 +1,9 @@
 import pandas as pd
 from datetime import datetime
+from flask import Flask, jsonify
+
+
+app = Flask(__name__)
 
 def digestFileContents(FileLocation):
     #Define Vars
@@ -57,7 +61,8 @@ def restructure_data(PRF_List, file_details):
     else:
         return zipped_data
 
-def store_parsed_data(PRF_List, team_number, team_procurement_detail,restructured_data,db):
+@app.route('/store_parsed_data')
+def store_parsed_data(PRF_List, file_name, team_number, team_procurement_detail, restructured_data, db):
     file_details = [item for item in PRF_List if item[0] == ['File Details']]
     if file_details:
         file_last_modified, total_file_price = file_details[0][1]
@@ -79,6 +84,7 @@ def store_parsed_data(PRF_List, team_number, team_procurement_detail,restructure
 
         # Create a new record
         new_record = team_procurement_detail(
+            file_name=file_name,
             team_number=team_number,
             item_description=description,
             part_number=part_number,
@@ -96,7 +102,7 @@ def store_parsed_data(PRF_List, team_number, team_procurement_detail,restructure
 
         # Add to the session
         db.session.add(new_record)
-
+    
     try:
         db.session.commit()
         print("Commit successful")

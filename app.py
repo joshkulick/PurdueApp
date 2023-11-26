@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for,flash,session
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import text
 from flask_mail import Mail, Message
 from itsdangerous import URLSafeTimedSerializer
 from functools import wraps
@@ -70,6 +71,7 @@ class BOM(db.Model):
     
 class team_procurement_detail(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    file_name = db.Column(db.String(255))  # Add a column for file name
     team_number = db.Column(db.Integer, index=True, nullable=False)
     item_description = db.Column(db.String(255), nullable=False)
     part_number = db.Column(db.String(50), nullable=True)
@@ -81,6 +83,7 @@ class team_procurement_detail(db.Model):
     file_last_modified = db.Column(db.DateTime, nullable=True)  # Last modification date of the file
     total_file_price = db.Column(db.Float, nullable=True)  # Total price from file details
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)  # Timestamp of record creation
+    
 
 #FILE UPLOAD INFORMATION
 UPLOAD_FOLDER = os.getcwd() + r'/uploads'
@@ -225,10 +228,7 @@ def login():
     
     return render_template('LoginPage.html')
 
-@app.route('/prf_status')
-@login_required
-def prf_status():
-    return render_template('PrfStatus.html')
+
 
 @app.route('/registration', methods=['GET', 'POST'])
 def registration():
@@ -322,8 +322,9 @@ def upload_file():
             print(file_details)
             restructured_list = restructure_data(DataInstance[1], file_details)
             print(restructured_list)
-            store_parsed_data(DataInstance[1], team_number, team_procurement_detail,restructured_list,db)
-            flash('File successfully uploaded')
+            store_parsed_data(DataInstance[1], file.filename, team_number, team_procurement_detail, restructured_list, db)
+            flash('File successfully uploaded')            
+            
         else:
             flash('Error: User not found.')
         return redirect(url_for('prfsub'))
@@ -362,15 +363,14 @@ def show_users():
 def root():
     return redirect(url_for('home'))
 
-@app.route('/adminview')
-@login_required
-def adminview():
-    return render_template('adminview.html')
 
-@app.route('/prf_status')
+@app.route('/prf_status', methods=['GET'])
 @login_required
 def prfstatus():
-    return render_template('PrfStatus.html')
+    query = text("SELECT id, created_at, team_number FROM team_procurement_detail") 
+    result = db.session.execute(query)
+    prf_data = result.fetchall()
+    return render_template('PrfStatus.html', prf_data=prf_data)
 
 @app.route('/BOMlist')
 @login_required
@@ -379,13 +379,41 @@ def bomlist():
 
 @app.route('/StudentBOM')
 @login_required
-def bomlist():
+def stubomlist():
     return render_template('StudentBOM.html')
 
 @app.route('/<path:unknown_route>', methods=['GET'])
 def catch_all(unknown_route):
     # Redirect all unknown routes to the homepage
     return redirect(url_for('home'))
+
+@app.route('/adminview', methods=['GET'])
+@login_required
+def get_user_data():
+    query = text("SELECT email, team_number FROM user") 
+    result = db.session.execute(query)
+    user_data = result.fetchall()
+    return render_template('adminview.html', user_data=user_data)
+
+@app.route('/file_info')
+@login_required
+def file_info():
+    # Assuming the file path is known or retrieved from the database
+    file_name = 'F23_T100_PRF_Purdue.xlsx'
+    file_path = os.path.join(app.config['UPLOAD_FOLDER'], file_name)
+     # Check if the file exists
+    if not os.path.exists(file_path):
+        return {'error': 'File not found'}, 404
+    last_modified = datetime.fromtimestamp(os.path.getmtime(file_path))
+    
+    # Convert last_modified to a readable format
+    formatted_last_modified = last_modified.strftime('%Y-%m-%d %H:%M:%S')
+    
+    # Return file name and last modified date as JSON
+    return {
+        'file_name': file_name,
+        'last_modified': formatted_last_modified
+    }
 
 if __name__ == '__main__':
     app.run(debug=True)
