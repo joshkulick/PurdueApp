@@ -86,26 +86,29 @@
   <button type="button" onclick="getdata()">Team PRF</button>
 </div>
 </form>
-<table style="left: 100%">
-  <tr>
-    <th>Date</th>
-    <th>ID</th>
-    <th>TEAM</th>
-    <th>Status</th>
-  </tr>
-  {% for prf in prf_data %}
-  <tr>
-      <td>{{ prf[1] }}</td>
-      <td>{{ prf[0] }}</td>
-      <td>{{ prf[2] }}</td>
+<table id="statusTable">
+  <thead>
+    <tr>
+      <th>Date</th>
+      <th>Document Name</th>
+      <th>Status</th>
+      <th>Comments</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>11/07/23</td>
+      <td>F23_T100_PRF_Purdue</td>
       <td>
         <select>
           <option value="status1">Approved</option>
           <option value="status2">Not Approved</option>
         </select>
       </td>
-  </tr>
-  {% endfor %}
+      <td> </td>
+      
+    </tr>
+  </tbody>
 </table>
 
 <div class="button-container">
@@ -114,7 +117,7 @@
 
 
 <script>
-  // Function to add a row to the table <table id="statusTable">
+  // Function to add a row to the table
   function addRowToTable(date, documentName, status, comments) {
     const tableBody = document.getElementById('statusTable').getElementsByTagName('tbody')[0];
     const newRow = tableBody.insertRow(tableBody.rows.length);
@@ -136,7 +139,6 @@
       addRowToTable('', '', '', ''); // Add empty rows for now; you can populate them with data later
     }
   }
-
   function getdata() {
   fetch('/PrfStatus')
     .then(response => {
@@ -159,24 +161,6 @@
   seeMoreButton.addEventListener('click', function() {
     expandTable();
   });
-
-  function getFileInfo() {
-    fetch('/file_info')  // Fetch file information from the Flask endpoint
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok.');
-        }
-        return response.json();
-      })
-      .then(data => {
-        // Update the HTML elements with file information
-        document.getElementById('file-name').innerText = data.file_name;
-        document.getElementById('last-modified').innerText = data.last_modified;
-      })
-      .catch(error => {
-        console.error('Fetch error:', error);
-      });
-  }
 
 </script>
 </body>
