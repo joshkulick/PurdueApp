@@ -36,7 +36,7 @@
     text-align: center;
   }
 
-  .see-more-button {
+  .pull-bom-button {
     margin-top: 20px;
     display: inline-block;
     padding: 15px 30px;
@@ -49,7 +49,7 @@
     transition: background-color 0.3s ease;
   }
 
-  .see-more-button:hover {
+  .pull-bom-button:hover {
     background-color: rgb(230, 184, 100);
   }
 
@@ -84,6 +84,7 @@
 
   <label for="Team">Team</label>
   <input type="text" id="Team" name="Team" placeholder="Team">
+
   <script>
     let input_team_num = ''
     const admin_team_num = document.getElementById('Team')
@@ -93,14 +94,24 @@
 
         // You can log the value to the console for testing
         console.log('User input:', userInput);
+
+        // Event listener for the "Pull BOM" button
+    const seeMoreButton = document.getElementById('pull-bom-button');
+    seeMoreButton.addEventListener('click', function() {
+      expandTable();
+  });  
     });
   </script>
+
+<div class="button-container">
+<button id="pull-bom-button" class="pull-bom-button">Pull BOM</button>
+</div>
 
 <table id="statusTable">
     <thead>
       <tr>
         <th>Vendor</th>
-        <th>Item #</th>
+        <th>Part #</th>
         <th>Status</th>
         <th>Date</th>
         <th>Comments</th>
@@ -108,7 +119,7 @@
     </thead>
 
     <tbody>
-      {% for bom_record in bom_records %}
+
           <tr>
               <td> bing bong </td>
               <td>{{ bom_record.part_number }}</td>
@@ -128,14 +139,9 @@
                 <input type="text" id="Comments" name="Comments" placeholder="Comments">
               </td>
           </tr>
-      {% endfor %}
+     
     </tbody>
-</table>
-  
-  <div class="button-container">
-    <button id="see-more-button" class="see-more-button">See More</button>
-  </div>
-  
+</table>  
   
 <script>
 function getdata() {
@@ -154,13 +160,6 @@ fetch('/BOMlist')
     console.error('Fetch error:', error);
   });
 }
-
-  // Event listener for the "See More" button
-  const seeMoreButton = document.getElementById('see-more-button');
-  seeMoreButton.addEventListener('click', function() {
-    expandTable();
-  });
-
 </script>
 </body>
 </html>
