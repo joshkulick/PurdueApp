@@ -72,7 +72,6 @@ class BOM(db.Model):
     
 class team_procurement_detail(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    file_name = db.Column(db.String(255))  # Add a column for file name
     team_number = db.Column(db.Integer, index=True, nullable=False)
     item_description = db.Column(db.String(255), nullable=False)
     part_number = db.Column(db.String(50), nullable=True)
@@ -362,29 +361,13 @@ def bomlist():
     return render_template('BOMlist.html', bom_record=bom_record)
  
     #StudentBOM
-@app.route('/StudentBOM', methods=['GET', 'POST'])
+@app.route('/StudentBOM', methods=['GET'])
 @login_required
 def studentbom():
-        #get team # from current session
-    team_number = session.get('team_number')
-        # Get records from TeamProcurementDetail
-    team_details = team_procurement_detail.query.all()
-
-    # Update BOM records based on TeamProcurementDetail
-    for team_detail in team_details:
-        bom_record = BOM.query.filter_by(team_number=team_detail.team_number).first()
-        
-        # Update BOM record with values from TeamProcurementDetail
-        if bom_record:
-           # bom_record.vendor = team_detail.vendor
-            bom_record.date = team_detail.delivery_date
-            bom_record.part_number = team_detail.part_number
-
-
-    # Commit the changes
-    db.session.commit()
-    bom_record = BOM.query.all()
-    return render_template('StudentBOM.html', team_number=team_number, bom_record=bom_record)
+    query = text("SELECT  created_at, item_description, part_number, quantity, unit_price FROM team_procurement_detail") 
+    result = db.session.execute(query)
+    stubom_data = result.fetchall() 
+    return render_template('StudentBOM.html', stubom_data=stubom_data)
 
 '''
 #PRF Status Endpoints
@@ -425,15 +408,7 @@ def prfstatus():
     prf_data = result.fetchall()
     return render_template('PrfStatus.html', prf_data=prf_data)
 
-""" @app.route('/BOMlist')
-@login_required
-def bomlist():
-    return render_template('BOMlist.html')
 
-@app.route('/StudentBOM')
-@login_required
-def bomlist():
-    return render_template('StudentBOM.html') """
 
 @app.route('/<path:unknown_route>', methods=['GET'])
 def catch_all(unknown_route):
