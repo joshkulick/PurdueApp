@@ -6,7 +6,6 @@ from functools import wraps
 from werkzeug.utils import secure_filename
 import os
 from datetime import datetime, timedelta
-import pytz
 
 #Local Imports
 from PRFSub_lib import digestFileContents, store_parsed_data, restructure_data, extract_file_details
@@ -97,11 +96,18 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
-#Web Decoration
+#Homepage
 @app.route('/home')
 @login_required
 def home():
-    return render_template('HomePage.html')
+    # Fetch the current user's team number
+    user_id = session.get('user_id')
+    current_user = db.session.get(User, user_id)
+    print(current_user)
+    if current_user:
+        team_number = current_user.team_number
+
+    return render_template('HomePage.html', team_number=team_number)
 
 @app.before_request
 def before_request():
@@ -332,10 +338,8 @@ def upload_file():
         flash('Allowed file types are .xlsx')
         return redirect(url_for('prfsub'))
 
-#BOM Endpoints
-
-
-    #BOMlist
+'''#BOM Endpoints
+#BOMlist
 @app.route('/BOMlist', methods=['GET', 'POST'])
 @login_required
 def bomlist():
@@ -357,14 +361,14 @@ def bomlist():
         db.session.commit()
     return render_template('BOMlist.html', bom_record=bom_record)
  
-    #StudentBOM
+ #StudentBOM
 @app.route('/StudentBOM', methods=['GET'])
 @login_required
 def studentbom():
     query = text("SELECT  created_at, item_description, part_number, quantity, unit_price FROM team_procurement_detail") 
     result = db.session.execute(query)
     stubom_data = result.fetchall() 
-    return render_template('StudentBOM.html', stubom_data=stubom_data)
+    return render_template('StudentBOM.html', stubom_data=stubom_data)'''
 
 '''
 #PRF Status Endpoints
@@ -401,13 +405,13 @@ def root():
 def adminview():
     return render_template('adminview.html')
 
-@app.route('/prf_status')
+'''@app.route('/prf_status')
 @login_required
 def prfstatus():
     query = text("SELECT id, created_at, team_number FROM team_procurement_detail") 
     result = db.session.execute(query)
     prf_data = result.fetchall()
-    return render_template('PrfStatus.html', prf_data=prf_data)
+    return render_template('PrfStatus.html', prf_data=prf_data)'''
 
 
 

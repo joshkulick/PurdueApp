@@ -179,7 +179,7 @@
     <div class="content-container">
         <div class="content-center">
             <img class="logo" src="static/Purdue_Boilermakers_logo.svg" alt="Purdue University Logo">
-            <div id="welcomeBanner">Welcome <span id="teamName">{VariableName}</span></div>
+            <div id="welcomeBanner">Welcome Team <span id="teamName">{{ team_number }}</span></div>
 
             <!-- Buttons -->
             <div class="button-container">
@@ -219,7 +219,7 @@
         });
 
         const teamNameElement = document.getElementById('teamName');
-        teamNameElement.textContent = 'Purdue Pete'; // This sets the hardcoded value.
+        //teamNameElement.textContent = 'Purdue Pete'; // This sets the hardcoded value.
 
     </script>
 </body>
