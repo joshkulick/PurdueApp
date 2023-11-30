@@ -78,8 +78,8 @@ tr:nth-child(even) {
         </a>
         <h1>Admin View</h1>
         <div class="dropdown">
-            <label for="filter">Team:</label>
-            <select id="filter" name="team_name">
+            <label for="team">Team:</label>
+            <select id="team" onchange="filtertable()">
                 {% for user in user_data %}
                     <option value="{{ user[1] }}">{{ user[1] }}</option>
                 {% endfor %}
@@ -90,7 +90,7 @@ tr:nth-child(even) {
             <a href="/prf_status" class="button">Team PRF</a>
             <a href="{{ url_for('static', filename='F23_T100_purdue.pdf') }}" class="button" download="F23_T100_purdue.pdf">FORM 12</a>
         </div>
-        <table style="left: 100%">
+        <table id="student-table" style="left: 100%">
             <tr>
                 <th>Email</th>
                 <th>Team</th>
@@ -107,27 +107,22 @@ tr:nth-child(even) {
 </html>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const filterDropdown = document.getElementById('filter');
-        filterDropdown.addEventListener('change', function () {
-            const selectedTeam = this.value;
-            fetch(`/get_team_members?team_number=${selectedTeam}`)
-                .then(response => response.json())
-                .then(data => {
-                    // Clear existing table content
-                    const tableBody = document.querySelector('#team-members tbody');
-                    tableBody.innerHTML = '';
+   function filtertable() {
+        var dropdown = document.getElementById("team");
+        var selectedValue = dropdown.value;
+        var table = document.getElementById('student-table');
+        var rows = table.getElementsByTagName("tr");
 
-                    // Display fetched team members in the table
-                    data.members.forEach(member => {
-                        const row = tableBody.insertRow();
-                        const emailCell = row.insertCell(0);
-                        const teamCell = row.insertCell(1);
-                        emailCell.textContent = member.email;
-                        teamCell.textContent = member.team_number;
-                    });
-                });
-        });
-    });
+        for (var i = 1; i < rows.length; i++) {
+            var row = rows[i];
+            var team = row.cells[1].textContent.trim();
+
+            if (team === selectedValue) {
+                row.style.display = "";
+            } else {
+                row.style.display = "none";
+            }
+        }
+    }
 </script>
         

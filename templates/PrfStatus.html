@@ -85,8 +85,16 @@
 <div class="button-container"></div>
   <button type="button" onclick="getdata()">Team PRF</button>
 </div>
+<div class="dropdown">
+  <label for="team">Team:</label>
+  <select id="team" onchange="filtertable()">
+      {% for prf in prf_data %}
+          <option value="{{ prf[2] }}">{{ prf[2] }}</option>
+      {% endfor %}
+  </select>
+</div>
 </form>
-<table style="left: 100%">
+<table id="student-table" style="left: 100%">
   <tr>
     <th>Date</th>
     <th>ID</th>
@@ -114,6 +122,24 @@
 
 
 <script>
+  // function to make drop down work 
+  function filtertable() {
+        var dropdown = document.getElementById("team");
+        var selectedValue = dropdown.value;
+        var table = document.getElementById('student-table');
+        var rows = table.getElementsByTagName("tr");
+
+        for (var i = 1; i < rows.length; i++) {
+            var row = rows[i];
+            var team = row.cells[2].textContent.trim();
+
+            if (team === selectedValue) {
+                row.style.display = "";
+            } else {
+                row.style.display = "none";
+            }
+        }
+    }
   // Function to add a row to the table <table id="statusTable">
   function addRowToTable(date, documentName, status, comments) {
     const tableBody = document.getElementById('statusTable').getElementsByTagName('tbody')[0];
