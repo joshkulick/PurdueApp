@@ -385,6 +385,24 @@ def prf_status():
         return "Form data not found for this team."
 '''
 #Maintenence Endpoints
+ #StudentBOM
+@app.route('/StudentBOM', methods=['GET'])
+@login_required
+def studentbom():
+    query = text("SELECT created_at, item_description, part_number, quantity, unit_price, team_number FROM team_procurement_detail") 
+    result = db.session.execute(query)
+    stubom_data = result.fetchall() 
+    curr_user = session.get('user_id')
+    teamquery = text("SELECT team_number FROM user WHERE id = :id LIMIT 1")
+    teamres = db.session.execute(teamquery, {"id": curr_user})
+    team_number = teamres.fetchone()
+    if team_number:
+        team_number_with_chars = str(team_number[0])
+    
+        # Keep only numeric characters
+        teamnum = ''.join(c for c in team_number_with_chars if c.isdigit())
+    
+    return render_template('StudentBOM.html', stubom_data=stubom_data, teamnum=teamnum)
 
 @app.route('/show_users')
 @login_required

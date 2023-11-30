@@ -81,8 +81,8 @@
   <img class="logo" src="static/Purdue_Boilermakers_logo.svg" alt="Purdue University Logo">
   </a>
 <h1>Bill of Materials</h1>
-<th>Team 10</th>
-
+<th>Team</th>
+<th>{{ teamnum }}</th>
 
 <table id="statusTable">
   
@@ -104,38 +104,8 @@
     {% endfor %}
 </table>
 
-<div class="button-container">
-  <button id="see-more-button" class="see-more-button">See More</button>
-</div>
 
-<!---->
 <script>
-    // Function to add a row to the table
-    function addRowToTable(vendor, itemNumber, itemStatus, date, comments) {
-      const tableBody = document.getElementById('statusTable').getElementsByTagName('tbody')[0];
-      const newRow = tableBody.insertRow(tableBody.rows.length);
-  
-      const vendorCell = newRow.insertCell(0);
-      const itemNumberCell = newRow.insertCell(1);
-      const itemStatusCell = newRow.insertCell(2);
-      const dateCell = newRow.insertCell(3);
-      const commentsCell = newRow.insertCell(4);
-  
-      vendorCell.innerHTML = vendor;
-      itemNumberCell.innerHTML = itemNumber;
-      itemStatusCell.innerHTML = itemStatus;
-      dateCell.innerHTML = date;
-      commentsCell.innerHTML = comments;
-    }
-  
-    // Function to expand the table by adding 10 empty rows
-    function expandTable() {
-      const numRowsToAdd = 1; // Number of rows to add
-      for (let i = 0; i < numRowsToAdd; i++) {
-        addRowToTable('Temu' , 'Chicken Costume' , 'Shipped' , '2023-11-12', ''); // Add empty rows for now; you can populate them with data later
-      }
-    }
-  
   function getdata() {
   fetch('/StudentBOM')
     .then(response => {
@@ -152,12 +122,6 @@
       console.error('Fetch error:', error);
     });
 }
-
-  // Event listener for the "See More" button
-  const seeMoreButton = document.getElementById('see-more-button');
-  seeMoreButton.addEventListener('click', function() {
-    expandTable();
-  });
 
 </script>
 </body>
