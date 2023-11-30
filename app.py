@@ -368,7 +368,7 @@ def studentbom():
         teamnum = ''.join(c for c in team_number_with_chars if c.isdigit())
         
         # Query to retrieve filtered data based on the team number
-        query = text("SELECT created_at, item_description, part_number, quantity, unit_price, team_number FROM team_procurement_detail WHERE team_number = :teamnum")
+        query = text("SELECT created_at, item_description, part_number, quantity, unit_price, team_number FROM approved_bom WHERE team_number = :teamnum")
         result = db.session.execute(query, {"teamnum": teamnum})
         stubom_data = result.fetchall()
         
@@ -377,6 +377,16 @@ def studentbom():
     # Handle the case where team_number is not available
     return render_template('error.html', message="Team number not found.")
 
+#admin BOM 
+@app.route('/BOMlist', methods=['GET'])
+@login_required
+def bomlist():
+    # Query to retrieve filtered data based on the team number
+    query = text("SELECT created_at, item_description, part_number, quantity, unit_price, team_number FROM approved_bom")
+    result = db.session.execute(query)
+    bomlist_data = result.fetchall()
+    return render_template('BOMlist.html', bomlist_data=bomlist_data)    
+#show user
 @app.route('/show_users')
 @login_required
 def show_users():
@@ -394,7 +404,7 @@ def root():
 @app.route('/prf_status', methods=['GET'])
 @login_required
 def prfstatus():
-    query = text("SELECT id, created_at, team_number FROM team_procurement_detail") 
+    query = text("SELECT id, created_at, team_number,item_description, unit_price, quantity, total_file_price FROM team_procurement_detail") 
     result = db.session.execute(query)
     prf_data = result.fetchall()
     return render_template('PrfStatus.html', prf_data=prf_data)

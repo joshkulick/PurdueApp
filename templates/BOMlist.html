@@ -82,68 +82,55 @@
   </a>
 <h1>Bill of Materials</h1>
 
-  <label for="Team">Team</label>
-  <input type="text" id="Team" name="Team" placeholder="Team">
-
-  <script>
-    let input_team_num = ''
-    const admin_team_num = document.getElementById('Team')
-    teamInput.addEventListener('input', function(event) {
-        // Update the variable with the current input value
-        userInput = event.target.value;
-
-        // You can log the value to the console for testing
-        console.log('User input:', userInput);
-
-        // Event listener for the "Pull BOM" button
-    const seeMoreButton = document.getElementById('pull-bom-button');
-    seeMoreButton.addEventListener('click', function() {
-      expandTable();
-  });  
-    });
-  </script>
-
-<div class="button-container">
-<button id="pull-bom-button" class="pull-bom-button">Pull BOM</button>
+<div class="dropdown">
+  <label for="team">Team:</label>
+  <select id="team" onchange="filtertable()">
+      {% for bomlist in bomlist_data %}
+          <option value="{{ bomlist[5] }}">{{ bomlist[5] }}</option>
+      {% endfor %}
+  </select>
 </div>
 
 <table id="statusTable">
-    <thead>
       <tr>
-        <th>Vendor</th>
-        <th>Part #</th>
-        <th>Status</th>
         <th>Date</th>
-        <th>Comments</th>
+        <th>Item</th>
+        <th>Part Number</th>
+        <th>Quantity</th>
+        <th>Unit Price</th>
+        <th>Team</th>
       </tr>
-    </thead>
-
-    <tbody>
-
-          <tr>
-              <td> bing bong </td>
-              <td>{{ bom_record.part_number }}</td>
-              <td>
-                <div class="dropdown">
-                  <label for="filter">Status:</label>
-                  <select id="filter" name="status">
-                      <option value="Ordered">Ordered</option>
-                      <option value="Shipped">Shipped</option>
-                      <option value="Delivered">Delivered</option>
-                  </select>
-              </div>
-              </td>
-              <td>{{ bom_record.date }}</td>
-              <td>
-                <label for="Comments">Comments</label>
-                <input type="text" id="Comments" name="Comments" placeholder="Comments">
-              </td>
-          </tr>
-     
-    </tbody>
+      {% for bomlist in bomlist_data %}
+      <tr>
+        <td>{{ bomlist[0] }}</td>
+        <td>{{ bomlist[1] }}</td> 
+        <td>{{ bomlist[2] }}</td>     
+        <td>{{ bomlist[3] }}</td>
+        <td>{{ bomlist[4] }}</td>
+        <td>{{ bomlist[5] }}</td>
+      </tr>
+      {% endfor %}
 </table>  
   
 <script>
+// function to make drop down work 
+function filtertable() {
+        var dropdown = document.getElementById("team");
+        var selectedValue = dropdown.value;
+        var table = document.getElementById('statusTable');
+        var rows = table.getElementsByTagName("tr");
+
+        for (var i = 1; i < rows.length; i++) {
+            var row = rows[i];
+            var team = row.cells[5].textContent.trim();
+
+            if (team === selectedValue) {
+                row.style.display = "";
+            } else {
+                row.style.display = "none";
+            }
+        }
+    }
 function getdata() {
 fetch('/BOMlist')
   .then(response => {

@@ -11,20 +11,6 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  # To suppress a warning me
 db = SQLAlchemy(app)
 
 # Define the Items table
-class approved_bom(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    team_number = db.Column(db.Integer, index=True, nullable=False)
-    item_description = db.Column(db.String(255), nullable=False)
-    part_number = db.Column(db.String(50), nullable=True)
-    quantity = db.Column(db.Integer, nullable=True)
-    unit_price = db.Column(db.Float, nullable=True)
-    ext_price = db.Column(db.Float, nullable=True)
-    url_link = db.Column(db.String(255), nullable=True)
-    delivery_date = db.Column(db.DateTime, nullable=True)
-    file_last_modified = db.Column(db.DateTime, nullable=True)  # Last modification date of the file
-    total_file_price = db.Column(db.Float, nullable=True)  # Total price from file details
-    created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)  # Timestamp of record creation
-
 
 
 # This function will create the table in the database

@@ -99,6 +99,10 @@
     <th>Date</th>
     <th>ID</th>
     <th>TEAM</th>
+    <th>Description</th>
+    <th>Unit Price</th></th>
+    <th>Quantity</th>
+    <th>Total Price</th>
     <th>Status</th>
   </tr>
   {% for prf in prf_data %}
@@ -106,6 +110,10 @@
       <td>{{ prf[1] }}</td>
       <td>{{ prf[0] }}</td>
       <td>{{ prf[2] }}</td>
+      <td>{{ prf[3] }}</td>
+      <td>{{ prf[4] }}</td>
+      <td>{{ prf[5] }}</td>
+      <td>{{ prf[6] }}</td>
       <td>
         <select name="status_{{ prf[0] }}">
           <option value="status1">----</option>
