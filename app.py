@@ -69,8 +69,22 @@ class BOM(db.Model):
     item_status = db.Column(db.String(50), nullable=True)
     date = db.Column(db.DateTime, nullable=True)
     comments = db.Column(db.String(255), nullable=True)
-    
+  
 class team_procurement_detail(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    team_number = db.Column(db.Integer, index=True, nullable=False)
+    item_description = db.Column(db.String(255), nullable=False)
+    part_number = db.Column(db.String(50), nullable=True)
+    quantity = db.Column(db.Integer, nullable=True)
+    unit_price = db.Column(db.Float, nullable=True)
+    ext_price = db.Column(db.Float, nullable=True)
+    url_link = db.Column(db.String(255), nullable=True)
+    delivery_date = db.Column(db.DateTime, nullable=True)
+    file_last_modified = db.Column(db.DateTime, nullable=True)  # Last modification date of the file
+    total_file_price = db.Column(db.Float, nullable=True)  # Total price from file details
+    created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)  # Timestamp of record creation
+
+class approved_bom(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     team_number = db.Column(db.Integer, index=True, nullable=False)
     item_description = db.Column(db.String(255), nullable=False)
@@ -337,53 +351,7 @@ def upload_file():
         flash('Allowed file types are .xlsx')
         return redirect(url_for('prfsub'))
 
-'''#BOM Endpoints
-#BOMlist
-@app.route('/BOMlist', methods=['GET', 'POST'])
-@login_required
-def bomlist():
-    #get team # from current session
-    user_id = session.get('user_id')
-    current_user = db.session.get(User, user_id)
-    team_num = current_user.team_number
-    # Get records from TeamProcurementDetail
-    team_details = team_procurement_detail.query.all()
-    # Update BOM records based on TeamProcurementDetail
-    for team_detail in team_details:
-        bom_record = BOM(team_number=team_num)        
-        # bom_record.vendor = team_detail.vendor
-        bom_record.date = team_detail.delivery_date
-        bom_record.part_number = team_detail.part_number
-        print(bom_record.part_number)
 
-        # Commit the changes
-        db.session.commit()
-    return render_template('BOMlist.html', bom_record=bom_record)
- 
- #StudentBOM
-@app.route('/StudentBOM', methods=['GET'])
-@login_required
-def studentbom():
-    query = text("SELECT  created_at, item_description, part_number, quantity, unit_price FROM team_procurement_detail") 
-    result = db.session.execute(query)
-    stubom_data = result.fetchall() 
-    return render_template('StudentBOM.html', stubom_data=stubom_data)'''
-
-'''
-#PRF Status Endpoints
-@app.route('/prf_status')
-@login_required
-def prf_status():
-    # Query the database to retrieve the form data for the current team
-    form_data = db.query.filter_by(team_number=team_number).first()
-    # Check if the form data exists
-    if form_data:
-        # Render the template with the form data
-        return render_template('PrfStatus.html', form_data=form_data)
-    else:
-        # Case where form data doesn't exist
-        return "Form data not found for this team."
-'''
 #Maintenence Endpoints
  #StudentBOM
 @app.route('/StudentBOM', methods=['GET'])
@@ -465,6 +433,34 @@ def file_info():
         'file_name': file_name,
         'last_modified': formatted_last_modified
     }
+
+@app.route('/update_status', methods=['POST'])
+@login_required
+def update_status():
+    selected_ids = request.form.getlist('selected_ids')  # Get list of selected row IDs
+    
+    for id in selected_ids:
+        prf_row = team_procurement_detail.query.filter_by(id=id).first()  # Get the row by ID
+        if prf_row:
+            status = request.form.get(f'status_{id}')  # Get the selected status value for the row
+
+            if status == 'status3':  # If status is 'Approved'
+                # Move the data to the approved_bom table
+                approved_data = approved_bom(
+                team_number=prf_row.team_number,
+                item_description=prf_row.item_description,
+                part_number=prf_row.part_number,
+                quantity=prf_row.quantity,
+                unit_price=prf_row.unit_price,
+                ext_price=prf_row.ext_price,
+                url_link=prf_row.url_link,
+                total_file_price=prf_row.total_file_price
+                )
+                db.session.add(approved_data)
+                db.session.delete(prf_row)  # Delete the row from team_procurement_detail
+    
+    db.session.commit()
+    return redirect(url_for('prfstatus'))  # Redirect to the PRF status page after processing
 
 if __name__ == '__main__':
     app.run(debug=True)

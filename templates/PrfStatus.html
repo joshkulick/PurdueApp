@@ -81,9 +81,9 @@
   <img class="logo" src="static/Purdue_Boilermakers_logo.svg" alt="Purdue University Logo">
   </a>
 <h1>Parts Requisition Form Status</h1>
-<form>
+ <form id="status-form" method="POST" action="/update_status">
 <div class="button-container"></div>
-  <button type="button" onclick="getdata()">Team PRF</button>
+
 </div>
 <div class="dropdown">
   <label for="team">Team:</label>
@@ -93,7 +93,7 @@
       {% endfor %}
   </select>
 </div>
-</form>
+
 <table id="student-table" style="left: 100%">
   <tr>
     <th>Date</th>
@@ -107,18 +107,25 @@
       <td>{{ prf[0] }}</td>
       <td>{{ prf[2] }}</td>
       <td>
-        <select>
-          <option value="status1">Approved</option>
+        <select name="status_{{ prf[0] }}">
+          <option value="status1">----</option>
           <option value="status2">Not Approved</option>
+          <option value="status3">Approved</option>
         </select>
       </td>
+      <td style="display: none;">
+        <input type="hidden" name="selected_ids" value="{{ prf[0] }}">
+    </td>
   </tr>
   {% endfor %}
 </table>
-
+<button type="submit">Update Status</button>
+</form>
 <div class="button-container">
   <button id="see-more-button" class="see-more-button">See More</button>
 </div>
+
+
 
 
 <script>
@@ -140,6 +147,7 @@
             }
         }
     }
+    
   // Function to add a row to the table <table id="statusTable">
   function addRowToTable(date, documentName, status, comments) {
     const tableBody = document.getElementById('statusTable').getElementsByTagName('tbody')[0];
@@ -163,47 +171,23 @@
     }
   }
 
-  function getdata() {
-  fetch('/PrfStatus')
-    .then(response => {
-      if (!response.ok) {
-        throw new Error('Network response was not ok.');
-      }
-      return response.json();
-    })
-    .then(data => {
-      console.log(data); // Check the parsed JSON data
-      // Process the data as needed
-    })
-    .catch(error => {
-      console.error('Fetch error:', error);
+ // JavaScript code to handle row selection and update the hidden input field
+    // This script should be placed after the table in your HTML file
+    // Add an event listener to the form to handle submission
+    document.getElementById('status-form').addEventListener('submit', function(event) {
+        const selectedRows = document.querySelectorAll('#student-table tr');
+        const selectedIds = [];
+        selectedRows.forEach(row => {
+            const selectedStatus = row.querySelector('select[name="selected_status"]').value;
+            if (selectedStatus === 'status3') {
+                const selectedId = row.querySelector('input[name="selected_ids"]').value;
+                selectedIds.push(selectedId);
+            }
+        });
+        // Update the value of the hidden input field with the selected IDs
+        const hiddenInput = document.querySelector('input[name="selected_ids"]');
+        hiddenInput.value = selectedIds.join(',');
     });
-}
-
-  // Event listener for the "See More" button
-  const seeMoreButton = document.getElementById('see-more-button');
-  seeMoreButton.addEventListener('click', function() {
-    expandTable();
-  });
-
-  function getFileInfo() {
-    fetch('/file_info')  // Fetch file information from the Flask endpoint
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok.');
-        }
-        return response.json();
-      })
-      .then(data => {
-        // Update the HTML elements with file information
-        document.getElementById('file-name').innerText = data.file_name;
-        document.getElementById('last-modified').innerText = data.last_modified;
-      })
-      .catch(error => {
-        console.error('Fetch error:', error);
-      });
-  }
-
 </script>
 </body>
 </html>
