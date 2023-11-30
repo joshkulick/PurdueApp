@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for,flash,session
+from flask import Flask, render_template, request, redirect, url_for,flash,session, current_app
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import text
 from flask_mail import Mail, Message
@@ -468,9 +468,22 @@ def update_status():
                 )
                 db.session.add(approved_data)
                 db.session.delete(prf_row)  # Delete the row from team_procurement_detail
+            elif status == 'status2':  # If status is 'Status 2'
+                # Retrieve the user with the matching team_number
+                user = User.query.filter_by(team_number=prf_row.team_number).first()
+                if user:
+                    send_notification_email(user.email, prf_row.item_description)
+                db.session.delete(prf_row)
+    
     
     db.session.commit()
     return redirect(url_for('prfstatus'))  # Redirect to the PRF status page after processing
+
+def send_notification_email(email, item_description):
+    msg = Message("Item Not Approved Notification", sender="PurdueCapstone@gmail.com", recipients=[email])
+    msg.body = f"Dear User,\n\nThe item '{item_description}' has not been approved. Please contact your mentor or professor for further information."
+    with current_app.app_context():
+        mail.send(msg)
 
 if __name__ == '__main__':
     app.run(debug=True)
