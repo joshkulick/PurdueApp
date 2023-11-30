@@ -92,6 +92,7 @@
       <th>Part Number</th>
       <th>Quantity</th>
       <th>unit price</th>
+      <th>Team</th>
     </tr>
     {% for stubom in stubom_data %}
     <tr>
@@ -100,10 +101,10 @@
       <td>{{ stubom[2] }}</td>     
       <td>{{ stubom[3] }}</td>
       <td>{{ stubom[4] }}</td>
+      <td>{{ stubom[5] }}</td>
     </tr>
     {% endfor %}
 </table>
-
 
 <script>
   function getdata() {
