@@ -44,11 +44,11 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     email = db.Column(db.String(150), nullable=False, unique=True)
     password = db.Column(db.String(150), nullable=False)
-    team_number = db.Column(db.Integer, nullable=False)
+    team_number = db.Column(db.String(150), nullable=False)
 
 class Team(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    team_number = db.Column(db.Integer, nullable=False)
+    team_number = db.Column(db.String(150), nullable=False)
     team_name = db.Column(db.String(255), nullable=False)
 
 class Item(db.Model):
@@ -63,7 +63,7 @@ class Item(db.Model):
 
 class BOM(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    team_number = db.Column(db.Integer, index=True, nullable=False)
+    team_number = db.Column(db.String(150), nullable=False)
     vendor = db.Column(db.String(150), nullable=True)
     part_number = db.Column(db.String(50), nullable=True)
     item_status = db.Column(db.String(50), nullable=True)
@@ -72,7 +72,7 @@ class BOM(db.Model):
   
 class team_procurement_detail(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    team_number = db.Column(db.Integer, index=True, nullable=False)
+    team_number = db.Column(db.String(150), nullable=False)
     item_description = db.Column(db.String(255), nullable=False)
     part_number = db.Column(db.String(50), nullable=True)
     quantity = db.Column(db.Integer, nullable=True)
@@ -86,7 +86,7 @@ class team_procurement_detail(db.Model):
 
 class approved_bom(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    team_number = db.Column(db.Integer, index=True, nullable=False)
+    team_number = db.Column(db.String(150), nullable=False)
     item_description = db.Column(db.String(255), nullable=False)
     part_number = db.Column(db.String(50), nullable=True)
     quantity = db.Column(db.Integer, nullable=True)
@@ -363,10 +363,8 @@ def studentbom():
     team_number = teamres.fetchone()
     
     if team_number:
-        team_number_with_chars = str(team_number[0])
-        # Keep only numeric characters
-        teamnum = ''.join(c for c in team_number_with_chars if c.isdigit())
-        
+        teamnum = str(team_number[0])
+
         # Query to retrieve filtered data based on the team number
         query = text("SELECT created_at, item_description, part_number, quantity, unit_price, team_number FROM approved_bom WHERE team_number = :teamnum")
         result = db.session.execute(query, {"teamnum": teamnum})
@@ -385,7 +383,8 @@ def bomlist():
     query = text("SELECT created_at, item_description, part_number, quantity, unit_price, team_number FROM approved_bom")
     result = db.session.execute(query)
     bomlist_data = result.fetchall()
-    return render_template('BOMlist.html', bomlist_data=bomlist_data)    
+    return render_template('BOMlist.html', bomlist_data=bomlist_data)   
+ 
 #show user
 @app.route('/show_users')
 @login_required
