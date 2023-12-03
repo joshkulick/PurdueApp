@@ -379,12 +379,18 @@ def studentbom():
 @app.route('/BOMlist', methods=['GET'])
 @login_required
 def bomlist():
+    user_id = session.get('user_id')
+    current_user = User.query.get(user_id)
     # Query to retrieve filtered data based on the team number
-    query = text("SELECT created_at, item_description, part_number, quantity, unit_price, team_number FROM approved_bom")
-    result = db.session.execute(query)
-    bomlist_data = result.fetchall()
-    return render_template('BOMlist.html', bomlist_data=bomlist_data)   
- 
+    if current_user and current_user.team_number == "PURDUE":
+        query = text("SELECT created_at, item_description, part_number, quantity, unit_price, team_number FROM approved_bom")
+        result = db.session.execute(query)
+        bomlist_data = result.fetchall()
+        return render_template('BOMlist.html', bomlist_data=bomlist_data)
+    else:
+        # Redirect to unauthorized page or handle the case where team_number is not "PURDUE"
+        return render_template('HomePage.html')
+
 #show user
 @app.route('/show_users')
 @login_required
@@ -401,13 +407,18 @@ def root():
 
 
 @app.route('/prf_status', methods=['GET'])
-@login_required
+@login_required 
 def prfstatus():
-    query = text("SELECT id, created_at, team_number,item_description, unit_price, quantity, total_file_price FROM team_procurement_detail") 
-    result = db.session.execute(query)
-    prf_data = result.fetchall()
-    return render_template('PrfStatus.html', prf_data=prf_data)
-
+    user_id = session.get('user_id')
+    current_user = User.query.get(user_id)
+    if current_user and current_user.team_number == "PURDUE":
+        query = text("SELECT id, created_at, team_number,item_description, unit_price, quantity, total_file_price FROM team_procurement_detail") 
+        result = db.session.execute(query)
+        prf_data = result.fetchall()
+        return render_template('PrfStatus.html', prf_data=prf_data)
+    else:
+        # Redirect to unauthorized page or handle the case where team_number is not "PURDUE"
+        return render_template('HomePage.html')
 
 
 @app.route('/<path:unknown_route>', methods=['GET'])
@@ -418,10 +429,17 @@ def catch_all(unknown_route):
 @app.route('/adminview', methods=['GET'])
 @login_required
 def get_user_data():
-    query = text("SELECT email, team_number FROM user") 
-    result = db.session.execute(query)
-    user_data = result.fetchall()
-    return render_template('adminview.html', user_data=user_data)
+    user_id = session.get('user_id')
+    current_user = User.query.get(user_id)
+
+    if current_user and current_user.team_number == "PURDUE":
+        query = text("SELECT email, team_number FROM user") 
+        result = db.session.execute(query)
+        user_data = result.fetchall()
+        return render_template('adminview.html', user_data=user_data)
+    else:
+        # Redirect to unauthorized page or handle the case where team_number is not "PURDUE"
+        return render_template('HomePage.html')
 
 @app.route('/file_info')
 @login_required
