@@ -122,8 +122,11 @@ def home():
     print(current_user)
     if current_user:
         team_number = current_user.team_number
-
-    return render_template('HomePage.html', team_number=team_number)
+    if current_user.team_number == "PURDUE":
+        ButtonDisable = False
+    else:
+        ButtonDisable = True
+    return render_template('HomePage.html', team_number=team_number,ButtonDisable=ButtonDisable)
 
 @app.before_request
 def before_request():
@@ -246,7 +249,6 @@ def login():
             return redirect(url_for('login'))
     
     return render_template('LoginPage.html')
-
 
 
 @app.route('/registration', methods=['GET', 'POST'])
@@ -389,7 +391,7 @@ def bomlist():
         return render_template('BOMlist.html', bomlist_data=bomlist_data)
     else:
         # Redirect to unauthorized page or handle the case where team_number is not "PURDUE"
-        return render_template('HomePage.html')
+        return redirect(url_for('home'))
 
 #show user
 @app.route('/show_users')
@@ -439,7 +441,7 @@ def get_user_data():
         return render_template('adminview.html', user_data=user_data)
     else:
         # Redirect to unauthorized page or handle the case where team_number is not "PURDUE"
-        return render_template('HomePage.html')
+        return redirect(url_for('home'))
 
 @app.route('/file_info')
 @login_required

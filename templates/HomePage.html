@@ -167,8 +167,7 @@
     </style>
     <title>Purdue Capstone Login</title>
 </head>
-
-<body>
+<body data-button-disable="{{ ButtonDisable }}">
     <div class="navbar">
         <div class="menu-icon" id="menuIcon">
             <div class="bar"></div>
@@ -183,10 +182,10 @@
 
             <!-- Buttons -->
             <div class="button-container">
-                <a href="/adminview" class="button">Admin View</a>
+                <a href="/adminview" class="button" id="adminViewButton">Admin View</a>
                 <a href="/prfsub" class="button">PRF Submission</a>
-                <a href="/prf_status" class="button">PRF Status</a>
-                <a href="/BOMlist" class="button">BOM List</a>
+                <a href="/prf_status" class="button" id="prfStatus">PRF Status</a>
+                <a href="/BOMlist" class="button" id="bomListButton">BOM List</a>
                 <a href="/StudentBOM" class="button">StudentBOM</a>
             </div>
         </div>
@@ -222,6 +221,16 @@
         //teamNameElement.textContent = 'Purdue Pete'; // This sets the hardcoded value.
 
     </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var buttonDisable = document.body.getAttribute('data-button-disable') === 'True';
+            if (buttonDisable) {
+                document.getElementById('adminViewButton').style.display = 'none';
+                document.getElementById('bomListButton').style.display = 'none';
+                document.getElementById('prfStatus').style.display = 'none';
+            }
+        });
+    </script>    
 </body>
 
 </html>
