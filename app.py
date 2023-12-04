@@ -236,8 +236,8 @@ def login():
             return redirect(url_for('login'))
         
         #Validation
-        print(f"Email from form: {email}")
-        print(f"Password from form: {password}")
+        #print(f"Email from form: {email}")
+        #print(f"Password from form: {password}")
 
         if user and user.password == password:  # Note: This is a simple check. Hashed Password future state?
             # Log the user in (you might want to use Flask-Login for session management)
@@ -393,15 +393,6 @@ def bomlist():
         # Redirect to unauthorized page or handle the case where team_number is not "PURDUE"
         return redirect(url_for('home'))
 
-#show user
-@app.route('/show_users')
-@login_required
-def show_users():
-    users = User.query.all()
-    for user in users:
-        print(f"ID: {user.id}, Email: {user.email}, Password: {user.password}, Team Number: {user.team_number}")
-    return "Users printed in console", 200
-
 @app.route('/')
 @login_required
 def root():
@@ -505,4 +496,4 @@ def send_notification_email(email, item_description):
         mail.send(msg)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False)
